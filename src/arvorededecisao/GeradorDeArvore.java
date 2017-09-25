@@ -66,31 +66,32 @@ public class GeradorDeArvore {
         *trocar meio;
         */
         
-        if (Math.random() < 1.0/3.0) {
+        if (Math.random() < 1.0/4.0) {
             if (Math.random() < 1.0/3.0) {
-                return new Soma(geraAlturaTres(), exp.getDireita());
+                return new Soma(mutacao(geraAlturaTres()), exp);
             }else if (Math.random() < 2.0/3.0) {
-                return new Subtracao(geraAlturaTres(), exp.getDireita());
+                return new Subtracao(mutacao(geraAlturaTres()), exp);
             }else{
-                return new Multiplicacao(geraAlturaTres(), exp.getDireita());
+                return new Multiplicacao(mutacao(geraAlturaTres()), exp);
             }
-        }else if (Math.random() < 2.0/3.0) {
+        }else if (Math.random() < 2.0/4.0) {
             if (Math.random() < 1.0/3.0) {
-                return new Soma(exp.getEsquerda(), geraAlturaTres());
+                return new Soma(exp, mutacao(geraAlturaTres()));
             }else if (Math.random() < 2.0/3.0) {
-                return new Subtracao(exp.getEsquerda(), geraAlturaTres());
+                return new Subtracao(exp, mutacao(geraAlturaTres()));
             }else{
-                return new Multiplicacao(exp.getEsquerda(), geraAlturaTres());
+                return new Multiplicacao(exp, mutacao(geraAlturaTres()));
             }
-        }else{
+        }else if (Math.random() < 3.0/4.0){
             if (Math.random() < 1.0/3.0) {
-                return new Soma(exp.getEsquerda(), geraAlturaDois());
+                return new Soma(exp, geraAlturaDois());
             }else if (Math.random() < 2.0/3.0) {
-                return new Subtracao(exp.getEsquerda(), geraAlturaDois());
+                return new Subtracao(exp, geraAlturaDois());
             }else{
-                return new Multiplicacao(exp.getEsquerda(), geraAlturaDois());
+                return new Multiplicacao(exp, geraAlturaDois());
             }
-        }
+        }else
+            return mutacao(exp);
         
     }
     

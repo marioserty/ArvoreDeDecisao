@@ -8,6 +8,7 @@ package leitura;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import sun.net.www.content.audio.x_aiff;
 
 /**
  *
@@ -15,8 +16,9 @@ import java.io.IOException;
  */
 public class Dados {
     public static double[][] entrada = new double[275][256];
+    public static double[][] saidaDesejada = new double[275][2];
 
-    public Dados(FileReader entrada) throws IOException {
+    public void setEntrada(FileReader entrada) throws IOException {
         BufferedReader buffer = new BufferedReader(entrada);
         String head = buffer.readLine();
         
@@ -29,6 +31,28 @@ public class Dados {
                 this.entrada[i][j] = Double.valueOf(vetor[j+1]);
             }
         }
+    }
+    
+    public void setSaidaDesejada(FileReader entrada) throws IOException {
+        BufferedReader buffer = new BufferedReader(entrada);
+        String head = buffer.readLine();
+        
+        for(int i = 0; buffer.ready(); i++){
+            
+            String line = buffer.readLine();
+            String[] vetor = line.split(",");
+            
+            if (vetor[1].equals("2")) {
+                vetor[1] = "0";
+            }else{
+                vetor[1] = "1";
+            }
+            
+            for (int j = 0; j < vetor.length; j++) {
+                this.saidaDesejada[i][j] = Double.valueOf(vetor[j]);
+            }
+        }
+        int x = 5;
     }
     
     public void printEntrada(){

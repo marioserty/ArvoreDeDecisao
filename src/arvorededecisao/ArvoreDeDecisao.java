@@ -22,16 +22,49 @@ public class ArvoreDeDecisao {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
         FileReader file = new FileReader("train2_5.csv");
-        Dados train = new Dados(file);
+        FileReader file2 = new FileReader("train2_5Labels.csv");
+        
+        Dados dados = new Dados();
+        dados.setEntrada(file);
+        dados.setSaidaDesejada(file2);
         
         GeradorDeArvore g = new GeradorDeArvore();
         ExpressaoAritmetica e = g.geraAlturaTres();
+        ExpressaoAritmetica e2 = e;
         
-        for (int i = 0; i < 1_000; i++) {
-            e = g.mutacao(e);
+        for (int i = 0; i < 10_000; i++) {
+            
+            e2 = g.mutacao(e2);
+            
+            if (erroFuncao(e2) < erroFuncao(e)) {
+                e = e2;
+            }else{
+                e2 = e;
+            }
+                
+            
         }
-        System.out.println(e.toString());
-        System.out.println(e.processa(2));
+        System.out.println(e);
+        System.out.println("Erro da função: " + erroFuncao(e));
+        
     }
     
+    public static double sigm(ExpressaoAritmetica exp, int instancia){
+        return 1.0/(1.0 + Math.pow(Math.E, - exp.processa(instancia)));        
+    }
+    
+    public static double erro(ExpressaoAritmetica exp, int instancia){
+        return Math.pow(Dados.saidaDesejada[instancia][1] - sigm(exp, instancia), 2);
+    }
+    
+    public static double erroFuncao(ExpressaoAritmetica exp){
+        double e = 0.0;
+        
+        for (int i = 0; i < 275; i++) {
+            e = e + erro(exp, i);
+            //System.out.println(e);
+        }
+        
+        return e;
+    }
 }
