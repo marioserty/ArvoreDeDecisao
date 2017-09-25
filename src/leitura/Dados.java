@@ -7,7 +7,9 @@ package leitura;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import sun.net.www.content.audio.x_aiff;
 
 /**
@@ -17,6 +19,22 @@ import sun.net.www.content.audio.x_aiff;
 public class Dados {
     public static double[][] entrada = new double[275][256];
     public static double[][] saidaDesejada = new double[275][2];
+
+    public static void setSaidaSubmissao(double[] sigm) throws IOException {
+        
+        FileWriter arq = new FileWriter("submit.csv");
+        PrintWriter gravarArq = new PrintWriter(arq);
+        
+        gravarArq.printf("Id,label1%n");
+        
+        for (int i = 1; i < 276; i++) {
+            
+            gravarArq.printf("%d,%d%n", i, (int) sigm[i-1]);
+            
+        }
+        
+        arq.close();
+    }
 
     public void setEntrada(FileReader entrada) throws IOException {
         BufferedReader buffer = new BufferedReader(entrada);
@@ -52,7 +70,6 @@ public class Dados {
                 this.saidaDesejada[i][j] = Double.valueOf(vetor[j]);
             }
         }
-        int x = 5;
     }
     
     public void printEntrada(){

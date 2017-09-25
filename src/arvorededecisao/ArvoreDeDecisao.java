@@ -23,6 +23,7 @@ public class ArvoreDeDecisao {
         
         FileReader file = new FileReader("train2_5.csv");
         FileReader file2 = new FileReader("train2_5Labels.csv");
+        FileReader file3 = new FileReader("test2_5.csv");        
         
         Dados dados = new Dados();
         dados.setEntrada(file);
@@ -32,7 +33,7 @@ public class ArvoreDeDecisao {
         ExpressaoAritmetica e = g.geraAlturaTres();
         ExpressaoAritmetica e2 = e;
         
-        for (int i = 0; i < 10_000; i++) {
+        for (int i = 0; i < 100_000; i++) {
             
             e2 = g.mutacao(e2);
             
@@ -46,6 +47,14 @@ public class ArvoreDeDecisao {
         }
         System.out.println(e);
         System.out.println("Erro da função: " + erroFuncao(e));
+        
+        dados.setEntrada(file3);
+        
+        double[] vet = new double[275];
+        for (int i = 0; i < 275; i++) {
+            vet[i] = sigm(e, i);
+        }
+        dados.setSaidaSubmissao(vet);
         
     }
     

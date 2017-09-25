@@ -84,14 +84,20 @@ public class GeradorDeArvore {
             }
         }else if (Math.random() < 3.0/4.0){
             if (Math.random() < 1.0/3.0) {
-                return new Soma(exp, geraAlturaDois());
+                return new Soma(exp.getEsquerda(), geraAlturaDois());
             }else if (Math.random() < 2.0/3.0) {
-                return new Subtracao(exp, geraAlturaDois());
+                return new Subtracao(exp.getEsquerda(), geraAlturaDois());
             }else{
-                return new Multiplicacao(exp, geraAlturaDois());
+                return new Multiplicacao(exp.getEsquerda(), geraAlturaDois());
             }
         }else
-            return mutacao(exp);
+            if (Math.random() < 1.0/3.0) {
+                return new Soma(geraAlturaDois(), exp.getDireita());
+            }else if (Math.random() < 2.0/3.0) {
+                return new Subtracao(geraAlturaDois(), exp.getDireita());
+            }else{
+                return new Multiplicacao(geraAlturaDois(), exp.getDireita());
+            }
         
     }
     
