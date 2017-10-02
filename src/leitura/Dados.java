@@ -29,7 +29,7 @@ public class Dados {
         
         for (int i = 1; i < 276; i++) {
             
-            gravarArq.printf("%d,%d%n", i, (int) sigm[i-1]);
+            gravarArq.printf("%d,%s%n", i, sigm[i-1]);
             
         }
         

@@ -21,39 +21,60 @@ public class ArvoreDeDecisao {
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
-        FileReader file = new FileReader("train2_5.csv");
-        FileReader file2 = new FileReader("train2_5Labels.csv");
-        FileReader file3 = new FileReader("test2_5.csv");        
+        double ensemble = 500.0;
+        int iteracoes = 5000;
         
         Dados dados = new Dados();
-        dados.setEntrada(file);
-        dados.setSaidaDesejada(file2);
-        
-        GeradorDeArvore g = new GeradorDeArvore();
-        ExpressaoAritmetica e = g.geraAlturaTres();
-        ExpressaoAritmetica e2 = e;
-        
-        for (int i = 0; i < 100_000; i++) {
-            
-            e2 = g.mutacao(e2);
-            
-            if (erroFuncao(e2) < erroFuncao(e)) {
-                e = e2;
-            }else{
-                e2 = e;
-            }
-                
-            
-        }
-        System.out.println(e);
-        System.out.println("Erro da função: " + erroFuncao(e));
-        
-        dados.setEntrada(file3);
-        
         double[] vet = new double[275];
-        for (int i = 0; i < 275; i++) {
-            vet[i] = sigm(e, i);
+        
+//        for (int i = 0; i < 275; i++) {
+//            vet[i] = 0;
+//        }
+        
+        for (int x  = 0; x < ensemble; x++) {
+        
+            FileReader file = new FileReader("train2_5.csv");
+            FileReader file2 = new FileReader("train2_5Labels.csv");
+            FileReader file3 = new FileReader("test2_5.csv");        
+            
+            dados.setEntrada(file);
+            dados.setSaidaDesejada(file2);
+
+            GeradorDeArvore g = new GeradorDeArvore();
+            ExpressaoAritmetica e = g.geraAlturaTres();
+
+            e = g.geraAlturaTres();
+            ExpressaoAritmetica e2 = e;
+
+            for (int i = 0; i < iteracoes; i++) {
+
+                e2 = g.mutacao(e2);
+
+                if (erroFuncao(e2) < erroFuncao(e)) {
+                    e = e2;
+                    //System.out.println("Erro da função: " + erroFuncao(e));
+                }else{
+                    e2 = e;
+                }
+            }
+
+
+            //System.out.println(e);
+            //System.out.println("Erro da função: " + erroFuncao(e));
+
+            //
+            dados.setEntrada(file3);
+
+            
+            for (int i = 0; i < 275; i++) {
+                vet[i] += sigm(e, i);
+            }
         }
+        
+        for (int i = 0; i < 275; i++) {
+            vet[i] = vet[i]/ensemble;
+        }
+        
         dados.setSaidaSubmissao(vet);
         
     }

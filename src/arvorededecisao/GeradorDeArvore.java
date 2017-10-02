@@ -90,7 +90,7 @@ public class GeradorDeArvore {
             }else{
                 return new Multiplicacao(exp.getEsquerda(), geraAlturaDois());
             }
-        }else
+        }else{
             if (Math.random() < 1.0/3.0) {
                 return new Soma(geraAlturaDois(), exp.getDireita());
             }else if (Math.random() < 2.0/3.0) {
@@ -98,6 +98,7 @@ public class GeradorDeArvore {
             }else{
                 return new Multiplicacao(geraAlturaDois(), exp.getDireita());
             }
+        }            
         
     }
     
