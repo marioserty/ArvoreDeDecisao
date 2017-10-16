@@ -102,6 +102,35 @@ public class GeradorDeArvore {
         
     }
     
+    public ExpressaoAritmetica geraITE_AlturaUm(){
+        int variavel = (int) (Math.random() * 256);
+        int label;
+        
+        if (Math.random() < 0.5) {
+            label = 0;
+        }else{
+            label = 1;
+        }
+        
+        return new IfThenElse(variavel, label, geraAlturaDois(), geraAlturaDois());
+    }
+    
+    public ExpressaoAritmetica geraITE_AlturaDois(){
+        ExpressaoAritmetica esq = geraITE_AlturaUm();
+        ExpressaoAritmetica dir = geraITE_AlturaUm();
+        
+        int variavel = (int) (Math.random() * 256);
+        int label;
+        
+        if (Math.random() < 0.5) {
+            label = 0;
+        }else{
+            label = 1;
+        }
+        
+        return new IfThenElse(variavel, label, esq, dir);
+    }
+    
 }
 
 
