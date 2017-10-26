@@ -22,8 +22,12 @@ public class ArvoreDeDecisao {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         
         GeradorDeArvore g = new GeradorDeArvore();
-        ExpressaoAritmetica e = g.geraITE_AlturaUm();
+        ExpressaoAritmetica e = g.geraITE_AlturaQuatro();
+        for (int i = 0; i < 1_000_000; i++) {
+            e = g.mutacaoIf(e);
+        }
         System.out.println(e);
+        System.out.println(e.processa(0));
         
 //        double ensemble = 500.0;//MELHOR: 300 
 //        int iteracoes = 1000;//MELHOR: 800
@@ -41,14 +45,17 @@ public class ArvoreDeDecisao {
 //            dados.setSaidaDesejada(file2);
 //
 //            GeradorDeArvore g = new GeradorDeArvore();
-//            ExpressaoAritmetica e = g.geraAlturaTres();
+////            ExpressaoAritmetica e = g.geraAlturaTres();
+//            ExpressaoAritmetica e = g.geraITE_AlturaQuatro();
 //
-//            e = g.geraAlturaTres();
+////            e = g.geraAlturaTres();
+////            ExpressaoAritmetica e2 = e;
+//
 //            ExpressaoAritmetica e2 = e;
 //
 //            for (int i = 0; i < iteracoes; i++) {
 //
-//                e2 = g.mutacao(e2);
+//                e2 = g.mutacaoIf(e2);
 //
 //                if (erroFuncao(e2) < erroFuncao(e)) {
 //                    e = e2;

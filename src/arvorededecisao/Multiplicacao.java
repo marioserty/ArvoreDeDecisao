@@ -25,7 +25,7 @@ public final class Multiplicacao extends Binaria{
 
     @Override
     public String toString() {
-        return ( "(" + super.getEsquerda().toString() + " * " + super.getDireita().toString() + ")");
+        return ( "("+ super.getEsquerda().toString() + " * " + super.getDireita().toString() + ")");
     }
     
 }

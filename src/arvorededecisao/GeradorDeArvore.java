@@ -66,34 +66,40 @@ public class GeradorDeArvore {
         *trocar meio;
         */
         
-        if (Math.random() < 1.0/4.0) {
-            if (Math.random() < 1.0/3.0) {
+        double d = Math.random();
+        
+        if (d < 1.0/4.0) {
+            double d2 = Math.random();
+            if (d2 < 1.0/3.0) {
                 return new Soma(mutacao(geraAlturaTres()), exp);
-            }else if (Math.random() < 2.0/3.0) {
+            }else if (d2 < 2.0/3.0) {
                 return new Subtracao(mutacao(geraAlturaTres()), exp);
             }else{
                 return new Multiplicacao(mutacao(geraAlturaTres()), exp);
             }
-        }else if (Math.random() < 2.0/4.0) {
-            if (Math.random() < 1.0/3.0) {
+        }else if (d < 2.0/4.0) {
+            double d2 = Math.random();
+            if (d2 < 1.0/3.0) {
                 return new Soma(exp, mutacao(geraAlturaTres()));
-            }else if (Math.random() < 2.0/3.0) {
+            }else if (d2 < 2.0/3.0) {
                 return new Subtracao(exp, mutacao(geraAlturaTres()));
             }else{
                 return new Multiplicacao(exp, mutacao(geraAlturaTres()));
             }
-        }else if (Math.random() < 3.0/4.0){
-            if (Math.random() < 1.0/3.0) {
+        }else if (d < 3.0/4.0){
+            double d2 = Math.random();
+            if (d2 < 1.0/3.0) {
                 return new Soma(exp.getEsquerda(), geraAlturaDois());
-            }else if (Math.random() < 2.0/3.0) {
+            }else if (d2 < 2.0/3.0) {
                 return new Subtracao(exp.getEsquerda(), geraAlturaDois());
             }else{
                 return new Multiplicacao(exp.getEsquerda(), geraAlturaDois());
             }
         }else{
-            if (Math.random() < 1.0/3.0) {
+            double d2 = Math.random();
+            if (d2 < 1.0/3.0) {
                 return new Soma(geraAlturaDois(), exp.getDireita());
-            }else if (Math.random() < 2.0/3.0) {
+            }else if (d2 < 2.0/3.0) {
                 return new Subtracao(geraAlturaDois(), exp.getDireita());
             }else{
                 return new Multiplicacao(geraAlturaDois(), exp.getDireita());
@@ -112,7 +118,7 @@ public class GeradorDeArvore {
             label = 1;
         }
         
-        return new IfThenElse(variavel, label, geraAlturaDois(), geraAlturaDois());
+        return new IfThenElse(variavel, label, geraAlturaTres(), geraAlturaTres());
     }
     
     public ExpressaoAritmetica geraITE_AlturaDois(){
@@ -130,6 +136,68 @@ public class GeradorDeArvore {
         
         return new IfThenElse(variavel, label, esq, dir);
     }
+    
+    public ExpressaoAritmetica geraITE_AlturaTres(){
+        ExpressaoAritmetica esq = geraITE_AlturaDois();
+        ExpressaoAritmetica dir = geraITE_AlturaDois();
+        
+        int variavel = (int) (Math.random() * 256);
+        int label;
+        
+        if (Math.random() < 0.5) {
+            label = 0;
+        }else{
+            label = 1;
+        }
+        
+        return new IfThenElse(variavel, label, esq, dir);
+    }
+    
+    public ExpressaoAritmetica geraITE_AlturaQuatro(){
+        ExpressaoAritmetica esq = geraITE_AlturaTres();
+        ExpressaoAritmetica dir = geraITE_AlturaTres();
+        
+        int variavel = (int) (Math.random() * 256);
+        int label;
+        
+        if (Math.random() < 0.5) {
+            label = 0;
+        }else{
+            label = 1;
+        }
+        
+        return new IfThenElse(variavel, label, esq, dir);
+    }
+    
+    public ExpressaoAritmetica mutacaoIf(ExpressaoAritmetica ite){
+        Random r = new Random();
+        
+        int n = r.nextInt(3);
+        
+        if (ite instanceof IfThenElse) {
+            switch(n){
+                case 0:
+                    int x = r.nextInt(256);
+                    ((IfThenElse)ite).setLabel(x);
+                    break;
+                case 1:
+                    this.mutacaoIf(((IfThenElse)ite).getEsquerda());
+                    break;
+                default:
+                    this.mutacaoIf(((IfThenElse)ite).getDireita());
+                    break;
+                }
+            return ite;
+        }else{
+            mutacao(ite);
+        }
+        
+        
+        return ite;
+        
+    }
+    
+    
     
 }
 

@@ -33,11 +33,7 @@ public class IfThenElse extends Binaria{
     
     @Override
     public String toString(){
-        return "if( x[" + variavel + "] == " + label + " ){\n"
-                + "\t" + super.getEsquerda().toString() + ";" +
-                "\n}else{\n" +
-                "\t" + super.getDireita().toString() + ";\n" +
-                "}";
+        return "if( x[" + variavel + "] == " + label + " ){"+"\n\t" +(super.getEsquerda().toString()) +"\n\t"+ "\n}else{"+"\n\t" + (super.getDireita().toString()) + "\n\t"+"}\n";
     }
 
     public int getVariavel() {
