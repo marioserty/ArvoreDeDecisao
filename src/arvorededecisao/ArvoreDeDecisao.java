@@ -8,7 +8,10 @@ package arvorededecisao;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import leitura.Dados;
+import Reader.Data;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import metrics.AUC;
 
 /**
  *
@@ -19,117 +22,137 @@ public class ArvoreDeDecisao {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-        
-        //Teste para If-Then-Else
-//        GeradorDeArvore g = new GeradorDeArvore();
-//        ExpressaoAritmetica e = g.geraITE_AlturaQuatro();
-//        for (int i = 0; i < 1_000_000; i++) {
-//            e = g.mutacaoIf(e);
+//    public static void main(String[] args) throws FileNotFoundException, IOException {
+//        System.out.println("Data info:");
+//        Data.readTrain("train.csv", 1879, 10, "\\|");
+//        Data.readTest("test.csv", 498121, 9, "\\|");
+//        System.out.println("Train shape: (" + Data.trainNumRows + "," + Data.trainNumCols + ")");
+//        System.out.println("Test shape: (" + Data.testNumRows + "," + Data.testNumCols + ")");
+//        System.out.print("Colnames: ");
+//        for (int i = 0; i < Data.columns.length; i++) {
+//            System.out.print(Data.columns[i] + ", ");
 //        }
-//        System.out.println(e);
-//        System.out.println(e.processa(0));
-        
-        double ensemble = 500.0;//MELHOR: 300 
-        int iteracoes = 100_000;//MELHOR: 800
-        boolean crossValidation = true;
-        ExpressaoAritmetica[] ex = new ExpressaoAritmetica[5];
-        
-        Dados dados = new Dados();
-        double[] vet = new double[275];
-        
-        //Teste para executar 5 cross validacoes em expressoes diferentes.
-        //Comentar for e descomentar setSaida para gerar arquivo de submissao
-        for(int k = 0; k < 5; k++){
-            for (int x  = 0; x < ensemble; x++) {
+//
+//        double ensemble = 500.0;
+//        int iterations = 200_000;
+//        boolean crossValidation = true;
+//        ExpressaoAritmetica[] ex = new ExpressaoAritmetica[5];
+//
+//        GeradorDeArvore g = new GeradorDeArvore();
+//        ExpressaoAritmetica e = g.geraAlturaTres();
+//        ExpressaoAritmetica e2 = e;
+//
+//        for (int i = 0; i < iterations; i++) {
+//            e2 = g.mutacao(e2);
+//            if (profit(e2) > profit(e)) {
+//                e = e2;
+//                //System.out.println("Erro da função: " + erroFuncao(e));
+//                System.out.println("Profit: " + profit(e));
+//            } else {
+//                e2 = e;
+//            }
+//            if (i % 10_000 == 0) {
+//                System.out.println("it: " + i);
+//            }
+//        }
+//
+//    }
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        System.out.println("Data info:");
+        Data.readTrain("train0.csv", 534, 257, ",");
+        //Data.readTrain("train0u.csv", 534, 47, ",");
+        System.out.println("Train shape: (" + Data.trainNumRows + "," + Data.trainNumCols + ")");
+        Data.columnsNames();
 
-                FileReader file = new FileReader("train2_5.csv");
-                FileReader file2 = new FileReader("train2_5Labels.csv");
-                FileReader file3 = new FileReader("test2_5.csv");        
+        int iterations = 5000;
+        int verbose = 100;
 
-                dados.setEntrada(file);
-                dados.setSaidaDesejada(file2);
+        GeradorDeArvore g = new GeradorDeArvore();
+        ExpressaoAritmetica e = g.geraAlturaTres();
+        ExpressaoAritmetica e2 = e;
 
-                GeradorDeArvore g = new GeradorDeArvore();
-                ExpressaoAritmetica e = g.geraAlturaTres();
-    //            ExpressaoAritmetica e = g.geraITE_AlturaQuatro();
+        String bestf = null;
+        int besti = 0;
 
-                ExpressaoAritmetica e2 = e;
-
-                for (int i = 0; i < iteracoes; i++) {
-
-                    e2 = g.mutacao(e2);
-
-                    if(!crossValidation){
-                        if (erroFuncao(e2) < erroFuncao(e)) {
-                            e = e2;
-                            //System.out.println("Erro da função: " + erroFuncao(e));
-                        }else{
-                            e2 = e;
-                        }
-                    }else{
-
-                    }
-                }
-                //System.out.println(e);
-                //System.out.println("Erro da função: " + erroFuncao(e));
-
-                dados.setEntrada(file3);
-
-                for (int i = 0; i < 275; i++) {
-                    vet[i] += sigm(e, i);
-                }
-                
-                ex[k] = e;
+        for (int i = 0; i < iterations; i++) {
+            e2 = g.mutacao(e2);
+            if (AUROC(e2) > AUROC(e)) {
+                e = e2;
+                bestf = e.toString();
+                besti = i;
+            } else {
+                e2 = e;
             }
-
-            for (int i = 0; i < 275; i++) {
-                vet[i] = vet[i]/ensemble;
+            if (i % verbose == 0) {
+                System.out.print("it: " + i);
+                System.out.println(" AUC: " + AUROC(e));
             }
         }
-        
-        
-        for (int i = 0; i < 5; i++) {
-//            System.out.println(erroFuncao(ex[i]));
-            System.out.println(LOOCV(ex[i]));
+        System.out.println("Formula: \n" + bestf);
+        System.out.println("Best iteration: " + besti);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("formulas.txt"));
+        writer.write(bestf);
+        writer.close();
+
+    }
+
+    public static double AUROC(ExpressaoAritmetica exp) {
+        double[] probability = new double[Data.target.length];
+        for (int i = 0; i < Data.target.length; i++) {
+            probability[i] = exp.processa(i);
         }
-        
-        //dados.setSaidaSubmissao(vet);
-        
+        return AUC.measure(Data.target, probability);
     }
-    
-    public static double sigm(ExpressaoAritmetica exp, int instancia){
-        return 1.0/(1.0 + Math.pow(Math.E, - exp.processa(instancia)));        
+
+    public static int profit(ExpressaoAritmetica exp) {
+        int p = 0;
+        for (int i = 0; i < Data.target.length; i++) {
+            if (Math.round(exp.processa(i)) == 0 && Data.target[i] == 1) {
+//                System.out.println("Pred: " + Math.round(exp.processa(i)) + ", Label: " + Data.target[i]);
+                p = p - 5;
+            } else if (Math.round(exp.processa(i)) == 1 && Data.target[i] == 1) {
+//                System.out.println("Pred: " + Math.round(exp.processa(i)) + ", Label: " + Data.target[i]);
+                p = p + 5;
+            } else if (Math.round(exp.processa(i)) == 1 && Data.target[i] == 0) {
+//                System.out.println("Pred: " + Math.round(exp.processa(i)) + ", Label: " + Data.target[i]);
+                p = p - 25;
+            }
+        }
+        return p;
     }
-    
-    public static double erro(ExpressaoAritmetica exp, int instancia){
-        return Math.pow(Dados.saidaDesejada[instancia][1] - sigm(exp, instancia), 2);
+
+    public static double sigm(ExpressaoAritmetica exp, int instancia) {
+        return 1.0 / (1.0 + Math.pow(Math.E, -exp.processa(instancia)));
     }
-    
-    public static double erroFuncao(ExpressaoAritmetica exp){
+
+    public static double erro(ExpressaoAritmetica exp, int instancia) {
+        return Math.pow(Data.target[instancia] - sigm(exp, instancia), 2);
+    }
+
+    public static double erroFuncao(ExpressaoAritmetica exp) {
         double e = 0.0;
-        
-        for (int i = 0; i < 275; i++) {
+
+        for (int i = 0; i < 1879; i++) {
             e = e + erro(exp, i);
-            //System.out.println(e);
+//            System.out.println(e);
         }
-        
+
         return e;
     }
-    
+
     //Leave One Out Cross Validation
-    public static double LOOCV(ExpressaoAritmetica exp){
+    public static double LOOCV(ExpressaoAritmetica exp) {
         double acertos = 0;
-        
+
         for (int i = 0; i < 275; i++) {
 //            System.out.println("erro total: " + erroFuncao(exp) + " erro sem " + (i+1) +": " + erro(exp, i+1));
 //            System.out.println(Math.round(exp.processa(i)) + " - " + Dados.saidaDesejada[i][1]);
-            if ( Math.round(sigm(exp,i)) == (int)Dados.saidaDesejada[i][1] ) {
+            if (Math.round(sigm(exp, i)) == (int) Data.target[i]) {
                 acertos = acertos + 1;
             }
         }
-        
-        return acertos/275.0;
+
+        return acertos / 275.0;
     }
-        
+
 }

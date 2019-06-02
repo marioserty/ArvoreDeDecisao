@@ -6,7 +6,7 @@
 package CrossValidation;
 
 import arvorededecisao.ExpressaoAritmetica;
-import leitura.Dados;
+import Reader.Data;
 
 /**
  *
@@ -17,7 +17,7 @@ public class LeaveOneOut {
     private double acerto;
     
     public void validate(ExpressaoAritmetica exp){
-        for (int i = -1; i < Dados.entrada.length; i++) {
+        for (int i = -1; i < Data.train.length; i++) {
             
         }
     }

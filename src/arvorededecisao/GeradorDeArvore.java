@@ -6,7 +6,7 @@
 package arvorededecisao;
 
 import java.util.Random;
-import leitura.Dados;
+import Reader.Data;
 
 /**
  *
@@ -18,7 +18,7 @@ public class GeradorDeArvore {
         if (Math.random() < 0.5) {
             return new Constante(Math.random() * 1000);
         }else{
-            return new Variavel((int) (Math.random() * 256));
+            return new Variavel((int) (Math.random() * Data.trainNumCols - 1));
         }
     }
     
@@ -109,7 +109,7 @@ public class GeradorDeArvore {
     }
     
     public ExpressaoAritmetica geraITE_AlturaUm(){
-        int variavel = (int) (Math.random() * 256);
+        int variavel = (int) (Math.random() * Data.trainNumCols - 1);
         int label;
         
         if (Math.random() < 0.5) {
@@ -125,7 +125,7 @@ public class GeradorDeArvore {
         ExpressaoAritmetica esq = geraITE_AlturaUm();
         ExpressaoAritmetica dir = geraITE_AlturaUm();
         
-        int variavel = (int) (Math.random() * 256);
+        int variavel = (int) (Math.random() * Data.trainNumCols - 1);
         int label;
         
         if (Math.random() < 0.5) {
@@ -141,7 +141,7 @@ public class GeradorDeArvore {
         ExpressaoAritmetica esq = geraITE_AlturaDois();
         ExpressaoAritmetica dir = geraITE_AlturaDois();
         
-        int variavel = (int) (Math.random() * 256);
+        int variavel = (int) (Math.random() * Data.trainNumCols - 1);
         int label;
         
         if (Math.random() < 0.5) {
@@ -157,7 +157,7 @@ public class GeradorDeArvore {
         ExpressaoAritmetica esq = geraITE_AlturaTres();
         ExpressaoAritmetica dir = geraITE_AlturaTres();
         
-        int variavel = (int) (Math.random() * 256);
+        int variavel = (int) (Math.random() * Data.trainNumCols - 1);
         int label;
         
         if (Math.random() < 0.5) {
@@ -177,7 +177,7 @@ public class GeradorDeArvore {
         if (ite instanceof IfThenElse) {
             switch(n){
                 case 0:
-                    int x = r.nextInt(256);
+                    int x = r.nextInt(Data.trainNumCols - 1);
                     ((IfThenElse)ite).setLabel(x);
                     break;
                 case 1:

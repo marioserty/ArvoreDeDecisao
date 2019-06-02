@@ -5,7 +5,7 @@
  */
 package arvorededecisao;
 
-import leitura.Dados;
+import Reader.Data;
 
 /**
  *
@@ -24,7 +24,7 @@ public class IfThenElse extends Binaria{
     
     @Override
     public double processa(int instancia) {
-        if (Dados.entrada[instancia][getVariavel()] == getLabel()) {
+        if (Data.train[instancia][getVariavel()] == getLabel()) {
             return super.esquerda.processa(instancia);
         }else{
             return super.direita.processa(instancia);

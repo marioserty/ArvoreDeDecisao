@@ -5,7 +5,7 @@
  */
 package arvorededecisao;
 
-import leitura.Dados;
+import Reader.Data;
 
 /**
  *
@@ -23,12 +23,12 @@ public class Variavel extends Unaria{
 
     @Override
     public double processa(int instancia) {
-        return Dados.entrada[instancia][this.coluna];
+        return Data.train[instancia][this.coluna];
     }
 
     @Override
     public String toString() {
-        return "x" + this.coluna;
+        return "data[\'"+Data.columns[this.coluna]+"\']";
     }
     
     public void setColuna(int newId){
