@@ -12,8 +12,8 @@ package Arithmetic;
 public final class Addition extends Binary {
 
     public Addition(ArithmeticExpression esq, ArithmeticExpression dir) {
-        super.direita = dir;
-        super.esquerda = esq;
+        super.right = dir;
+        super.left = esq;
     }
 
     @Override
@@ -22,13 +22,13 @@ public final class Addition extends Binary {
     }
 
     @Override
-    public double processa(int instancia) {
-        return (super.getEsquerda().processa(instancia) + super.getDireita().processa(instancia));
+    public double process(int instancia) {
+        return (super.getLeft().process(instancia) + super.getRight().process(instancia));
     }
 
     @Override
     public String toString() {
-        return ("(" + super.getEsquerda().toString() + " + " + super.getDireita().toString() + ")");
+        return ("(" + super.getLeft().toString() + " + " + super.getRight().toString() + ")");
     }
 
 }

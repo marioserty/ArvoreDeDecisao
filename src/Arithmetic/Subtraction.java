@@ -11,9 +11,9 @@ package Arithmetic;
  */
 public class Subtraction extends Binary {
 
-    public Subtraction(ArithmeticExpression esq, ArithmeticExpression dir) {
-        super.direita = dir;
-        super.esquerda = esq;
+    public Subtraction(ArithmeticExpression l, ArithmeticExpression r) {
+        super.right = r;
+        super.left = l;
     }
 
     @Override
@@ -22,12 +22,12 @@ public class Subtraction extends Binary {
     }
 
     @Override
-    public double processa(int instancia) {
-        return (super.getEsquerda().processa(instancia) - super.getDireita().processa(instancia));
+    public double process(int instancia) {
+        return (super.getLeft().process(instancia) - super.getRight().process(instancia));
     }
 
     @Override
     public String toString() {
-        return ("(" + super.getEsquerda().toString() + " - " + super.getDireita().toString() + ")");
+        return ("(" + super.getLeft().toString() + " - " + super.getRight().toString() + ")");
     }
 }

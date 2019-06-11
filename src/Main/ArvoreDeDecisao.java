@@ -35,13 +35,14 @@ public class ArvoreDeDecisao {
         
         RootWiseTree rwt = new RootWiseTree(iterations, verboseEval, verbosity, seed);
         rwt.run();
+        rwt.saveTreeEquation("eq.txt");
         
     }
 
     public static double AUROC(ArithmeticExpression exp) {
         double[] probability = new double[Data.target.length];
         for (int i = 0; i < Data.target.length; i++) {
-            probability[i] = exp.processa(i);
+            probability[i] = exp.process(i);
         }
         return AUC.measure(Data.target, probability);
     }
@@ -49,11 +50,11 @@ public class ArvoreDeDecisao {
     public static int profit(ArithmeticExpression exp) {
         int p = 0;
         for (int i = 0; i < Data.target.length; i++) {
-            if (Math.round(exp.processa(i)) == 0 && Data.target[i] == 1) {
+            if (Math.round(exp.process(i)) == 0 && Data.target[i] == 1) {
                 p = p - 5;
-            } else if (Math.round(exp.processa(i)) == 1 && Data.target[i] == 1) {
+            } else if (Math.round(exp.process(i)) == 1 && Data.target[i] == 1) {
                 p = p + 5;
-            } else if (Math.round(exp.processa(i)) == 1 && Data.target[i] == 0) {
+            } else if (Math.round(exp.process(i)) == 1 && Data.target[i] == 0) {
                 p = p - 25;
             }
         }
@@ -61,7 +62,7 @@ public class ArvoreDeDecisao {
     }
 
     public static double sigm(ArithmeticExpression exp, int instancia) {
-        return 1.0 / (1.0 + Math.pow(Math.E, -exp.processa(instancia)));
+        return 1.0 / (1.0 + Math.pow(Math.E, -exp.process(instancia)));
     }
 
     public static double erro(ArithmeticExpression exp, int instancia) {

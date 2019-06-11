@@ -13,10 +13,10 @@ import Reader.Data;
  */
 public class Variable extends Unary {
 
-    int coluna;
+    int column;
 
     public Variable(int id) {
-        this.coluna = id;
+        this.column = id;
     }
 
     @Override
@@ -25,26 +25,26 @@ public class Variable extends Unary {
     }
 
     @Override
-    public double processa(int instancia) {
-        return Data.train[instancia][this.coluna];
+    public double process(int instancia) {
+        return Data.train[instancia][this.column];
     }
 
     @Override
     public String toString() {
-        return "data[\'" + Data.columns[this.coluna] + "\']";
+        return "data[\'" + Data.columns[this.column] + "\']";
     }
 
-    public void setColuna(int newId) {
-        this.coluna = newId;
+    public void setColumn(int newId) {
+        this.column = newId;
     }
 
     @Override
-    public ArithmeticExpression getDireita() {
+    public ArithmeticExpression getRight() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ArithmeticExpression getEsquerda() {
+    public ArithmeticExpression getLeft() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -11,14 +11,14 @@ package Arithmetic;
  */
 public interface ArithmeticExpression extends Cloneable{
     
-    public double processa(int instancia);
+    public double process(int instance);
     
     @Override
     public String toString();
     
     public Object clone();
     
-    public ArithmeticExpression getDireita();
+    public ArithmeticExpression getRight();
     
-    public ArithmeticExpression getEsquerda();
+    public ArithmeticExpression getLeft();
 }

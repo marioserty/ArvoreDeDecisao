@@ -13,8 +13,8 @@ import java.util.logging.Logger;
  * @author Mário
  */
 public abstract class Binary implements ArithmeticExpression{
-    ArithmeticExpression esquerda;
-    ArithmeticExpression direita;
+    ArithmeticExpression left;
+    ArithmeticExpression right;
     
     @Override
     public Object clone(){
@@ -26,12 +26,12 @@ public abstract class Binary implements ArithmeticExpression{
         return null;
     }
 
-    public ArithmeticExpression getEsquerda() {
-        return esquerda;
+    public ArithmeticExpression getLeft() {
+        return left;
     }
 
-    public ArithmeticExpression getDireita() {
-        return direita;
+    public ArithmeticExpression getRight() {
+        return right;
     }
     
 }

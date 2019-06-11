@@ -11,9 +11,9 @@ package Arithmetic;
  */
 public final class Multiplication extends Binary {
 
-    public Multiplication(ArithmeticExpression esq, ArithmeticExpression dir) {
-        super.direita = dir;
-        super.esquerda = esq;
+    public Multiplication(ArithmeticExpression l, ArithmeticExpression r) {
+        super.right = r;
+        super.left = l;
     }
 
     @Override
@@ -22,13 +22,13 @@ public final class Multiplication extends Binary {
     }
 
     @Override
-    public double processa(int instancia) {
-        return (super.getEsquerda().processa(instancia) * super.getDireita().processa(instancia));
+    public double process(int instancia) {
+        return (super.getLeft().process(instancia) * super.getRight().process(instancia));
     }
 
     @Override
     public String toString() {
-        return ("(" + super.getEsquerda().toString() + " * " + super.getDireita().toString() + ")");
+        return ("(" + super.getLeft().toString() + " * " + super.getRight().toString() + ")");
     }
 
 }

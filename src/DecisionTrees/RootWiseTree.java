@@ -70,7 +70,7 @@ public class RootWiseTree implements Runnable {
     public double AUROC(ArithmeticExpression exp) {
         double[] probability = new double[Data.target.length];
         for (int i = 0; i < Data.target.length; i++) {
-            probability[i] = exp.processa(i);
+            probability[i] = exp.process(i);
         }
         return AUC.measure(Data.target, probability);
     }

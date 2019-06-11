@@ -11,10 +11,10 @@ package Arithmetic;
  */
 public final class Constant extends Unary{
     
-    double valor;
+    double value;
     
     public Constant(double v){
-        this.valor = v;
+        this.value = v;
     }
     
     public Object clone(){
@@ -22,26 +22,26 @@ public final class Constant extends Unary{
     }
 
     @Override
-    public double processa(int instancia) {
-        return this.valor;
+    public double process(int instancia) {
+        return this.value;
     }
 
     @Override
     public String toString() {
-        return Double.toString(valor);
+        return Double.toString(value);
     }
     
     public void setValor(double newV){
-        this.valor = newV;
+        this.value = newV;
     }    
 
     @Override
-    public ArithmeticExpression getDireita() {
+    public ArithmeticExpression getRight() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ArithmeticExpression getEsquerda() {
+    public ArithmeticExpression getLeft() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -11,7 +11,7 @@ import Arithmetic.Constant;
 import Arithmetic.Multiplication;
 import Arithmetic.Variable;
 import Arithmetic.ArithmeticExpression;
-import Arithmetic.IfThenElse;
+import Arithmetic.GreaterThan;
 import java.util.Random;
 import Reader.Data;
 
@@ -101,20 +101,20 @@ public class TreeGenerator {
         }else if (d < 3.0/4.0){
             double d2 = r.nextDouble();
             if (d2 < 1.0/3.0) {
-                return new Addition(exp.getEsquerda(), geraAlturaDois());
+                return new Addition(exp.getLeft(), geraAlturaDois());
             }else if (d2 < 2.0/3.0) {
-                return new Subtraction(exp.getEsquerda(), geraAlturaDois());
+                return new Subtraction(exp.getLeft(), geraAlturaDois());
             }else{
-                return new Multiplication(exp.getEsquerda(), geraAlturaDois());
+                return new Multiplication(exp.getLeft(), geraAlturaDois());
             }
         }else{
             double d2 = r.nextDouble();
             if (d2 < 1.0/3.0) {
-                return new Addition(geraAlturaDois(), exp.getDireita());
+                return new Addition(geraAlturaDois(), exp.getRight());
             }else if (d2 < 2.0/3.0) {
-                return new Subtraction(geraAlturaDois(), exp.getDireita());
+                return new Subtraction(geraAlturaDois(), exp.getRight());
             }else{
-                return new Multiplication(geraAlturaDois(), exp.getDireita());
+                return new Multiplication(geraAlturaDois(), exp.getRight());
             }
         }            
         
@@ -130,7 +130,7 @@ public class TreeGenerator {
             label = 1;
         }
         
-        return new IfThenElse(variavel, label, geraAlturaTres(), geraAlturaTres());
+        return new GreaterThan(variavel, label, geraAlturaTres(), geraAlturaTres());
     }
     
     public ArithmeticExpression geraITE_AlturaDois(){
@@ -146,7 +146,7 @@ public class TreeGenerator {
             label = 1;
         }
         
-        return new IfThenElse(variavel, label, esq, dir);
+        return new GreaterThan(variavel, label, esq, dir);
     }
     
     public ArithmeticExpression geraITE_AlturaTres(){
@@ -162,7 +162,7 @@ public class TreeGenerator {
             label = 1;
         }
         
-        return new IfThenElse(variavel, label, esq, dir);
+        return new GreaterThan(variavel, label, esq, dir);
     }
     
     public ArithmeticExpression geraITE_AlturaQuatro(){
@@ -178,7 +178,7 @@ public class TreeGenerator {
             label = 1;
         }
         
-        return new IfThenElse(variavel, label, esq, dir);
+        return new GreaterThan(variavel, label, esq, dir);
     }
     
     public ArithmeticExpression mutacaoIf(ArithmeticExpression ite){
@@ -186,17 +186,17 @@ public class TreeGenerator {
         
         int n = r.nextInt(3);
         
-        if (ite instanceof IfThenElse) {
+        if (ite instanceof GreaterThan) {
             switch(n){
                 case 0:
                     int x = r.nextInt(Data.trainNumCols - 1);
-                    ((IfThenElse)ite).setLabel(x);
+                    ((GreaterThan)ite).setLabel(x);
                     break;
                 case 1:
-                    this.mutacaoIf(((IfThenElse)ite).getEsquerda());
+                    this.mutacaoIf(((GreaterThan)ite).getLeft());
                     break;
                 default:
-                    this.mutacaoIf(((IfThenElse)ite).getDireita());
+                    this.mutacaoIf(((GreaterThan)ite).getRight());
                     break;
                 }
             return ite;
