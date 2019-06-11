@@ -3,20 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package arvorededecisao;
+package Main;
 
 /**
  *
  * @author Mário
  */
-public final class Soma extends Binaria{
-    
-    public Soma(ExpressaoAritmetica esq, ExpressaoAritmetica dir){
+public final class Sum extends Binary {
+
+    public Sum(ArithmeticExpressions esq, ArithmeticExpressions dir) {
         super.direita = dir;
         super.esquerda = esq;
     }
-    
-    private Soma(){}
+
+    @Override
+    public Object clone() {
+        return (ArithmeticExpressions) super.clone();
+    }
 
     @Override
     public double processa(int instancia) {
@@ -25,7 +28,7 @@ public final class Soma extends Binaria{
 
     @Override
     public String toString() {
-        return ( "(" + super.getEsquerda().toString() + " + " +super.getDireita().toString() + ")");
+        return ("(" + super.getEsquerda().toString() + " + " + super.getDireita().toString() + ")");
     }
-    
+
 }

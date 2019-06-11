@@ -3,21 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package arvorededecisao;
+package Main;
 
 /**
  *
  * @author Mário
  */
-public final class Constante extends Unaria{
+public final class Constant extends Unary{
     
     double valor;
     
-    public Constante(double v){
+    public Constant(double v){
         this.valor = v;
     }
     
-    private Constante(){}
+    public Object clone(){
+        return (ArithmeticExpressions) super.clone();
+    }
 
     @Override
     public double processa(int instancia) {
@@ -34,12 +36,12 @@ public final class Constante extends Unaria{
     }    
 
     @Override
-    public ExpressaoAritmetica getDireita() {
+    public ArithmeticExpressions getDireita() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ExpressaoAritmetica getEsquerda() {
+    public ArithmeticExpressions getEsquerda() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

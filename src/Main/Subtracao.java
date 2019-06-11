@@ -3,20 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package arvorededecisao;
+package Main;
 
 /**
  *
  * @author Mário
  */
-public class Subtracao extends Binaria{
-    
-    public Subtracao(ExpressaoAritmetica esq, ExpressaoAritmetica dir){
+public class Subtracao extends Binary {
+
+    public Subtracao(ArithmeticExpressions esq, ArithmeticExpressions dir) {
         super.direita = dir;
         super.esquerda = esq;
     }
-    
-    private Subtracao(){}
+
+    @Override
+    public Object clone() {
+        return (ArithmeticExpressions) super.clone();
+    }
 
     @Override
     public double processa(int instancia) {
@@ -25,6 +28,6 @@ public class Subtracao extends Binaria{
 
     @Override
     public String toString() {
-        return ( "(" + super.getEsquerda().toString() + " - " +super.getDireita().toString() + ")");
+        return ("(" + super.getEsquerda().toString() + " - " + super.getDireita().toString() + ")");
     }
 }

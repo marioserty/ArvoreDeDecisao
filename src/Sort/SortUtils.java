@@ -14,7 +14,7 @@
  * limitations under the License.
  *******************************************************************************/
 
-package sort;
+package Sort;
 
 /**
  * Some useful functions such as swap and swif-down used in many sorting

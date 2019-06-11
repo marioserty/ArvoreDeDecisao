@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package arvorededecisao;
+package Main;
 
 import Reader.Data;
 
@@ -11,11 +11,11 @@ import Reader.Data;
  *
  * @author Mário
  */
-public class IfThenElse extends Binaria{
+public class IfThenElse extends Binary{
     private int variavel;
     private int label;
     
-    public IfThenElse(int variavel,int label, ExpressaoAritmetica dir, ExpressaoAritmetica esq){
+    public IfThenElse(int variavel,int label, ArithmeticExpressions dir, ArithmeticExpressions esq){
         this.variavel = variavel;
         this.label = label;
         super.direita = dir;

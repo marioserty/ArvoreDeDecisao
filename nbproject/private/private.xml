@@ -3,18 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/Reader/Data.java</file>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Multiplicacao.java</file>
             <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/ArvoreDeDecisao.java</file>
             <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/ExpressaoAritmetica.java</file>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/GeradorDeArvore.java</file>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Constante.java</file>
             <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Soma.java</file>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Binaria.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/GeradorDeArvore.java</file>
             <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Unaria.java</file>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Variavel.java</file>
-            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/IfThenElse.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Binaria.java</file>
             <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Subtracao.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Multiplicacao.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Constante.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/Variavel.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/arvorededecisao/RootWiseTree.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/metrics/AUC.java</file>
+            <file>file:/home/mario/NetBeansProjects/ArvoreDeDecisao/src/sort/QuickSort.java</file>
         </group>
     </open-files>
 </project-private>

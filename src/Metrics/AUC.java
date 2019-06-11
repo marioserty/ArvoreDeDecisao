@@ -14,9 +14,9 @@
  * limitations under the License.
  *******************************************************************************/
 
-package metrics;
+package Metrics;
 
-import sort.QuickSort;
+import Sort.QuickSort;
 
 /**
  * The area under the curve (AUC). When using normalized units, the area under

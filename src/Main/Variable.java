@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package arvorededecisao;
+package Main;
 
 import Reader.Data;
 
@@ -11,15 +11,18 @@ import Reader.Data;
  *
  * @author Mário
  */
-public class Variavel extends Unaria{
-    
+public class Variable extends Unary {
+
     int coluna;
-    
-    public Variavel(int id){
+
+    public Variable(int id) {
         this.coluna = id;
     }
-    
-    Variavel(){}
+
+    @Override
+    public Object clone() {
+        return (ArithmeticExpressions) super.clone();
+    }
 
     @Override
     public double processa(int instancia) {
@@ -28,21 +31,21 @@ public class Variavel extends Unaria{
 
     @Override
     public String toString() {
-        return "data[\'"+Data.columns[this.coluna]+"\']";
+        return "data[\'" + Data.columns[this.coluna] + "\']";
     }
-    
-    public void setColuna(int newId){
+
+    public void setColuna(int newId) {
         this.coluna = newId;
     }
 
     @Override
-    public ExpressaoAritmetica getDireita() {
+    public ArithmeticExpressions getDireita() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ExpressaoAritmetica getEsquerda() {
+    public ArithmeticExpressions getEsquerda() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

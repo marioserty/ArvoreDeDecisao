@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package arvorededecisao;
+package Main;
 
 /**
  *
  * @author Mário
  */
-public interface ExpressaoAritmetica extends Cloneable{
+public interface ArithmeticExpressions extends Cloneable{
     
     public double processa(int instancia);
     
@@ -18,7 +18,7 @@ public interface ExpressaoAritmetica extends Cloneable{
     
     public Object clone();
     
-    public ExpressaoAritmetica getDireita();
+    public ArithmeticExpressions getDireita();
     
-    public ExpressaoAritmetica getEsquerda();
+    public ArithmeticExpressions getEsquerda();
 }
