@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Main;
+package Arithmetic;
 
 /**
  *
@@ -11,14 +11,14 @@ package Main;
  */
 public final class Multiplication extends Binary {
 
-    public Multiplication(ArithmeticExpressions esq, ArithmeticExpressions dir) {
+    public Multiplication(ArithmeticExpression esq, ArithmeticExpression dir) {
         super.direita = dir;
         super.esquerda = esq;
     }
 
     @Override
     public Object clone() {
-        return (ArithmeticExpressions) super.clone();
+        return (ArithmeticExpression) super.clone();
     }
 
     @Override

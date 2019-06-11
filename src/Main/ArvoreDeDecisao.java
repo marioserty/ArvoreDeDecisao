@@ -5,6 +5,7 @@
  */
 package Main;
 
+import Arithmetic.ArithmeticExpression;
 import DecisionTrees.RootWiseTree;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -37,7 +38,7 @@ public class ArvoreDeDecisao {
         
     }
 
-    public static double AUROC(ArithmeticExpressions exp) {
+    public static double AUROC(ArithmeticExpression exp) {
         double[] probability = new double[Data.target.length];
         for (int i = 0; i < Data.target.length; i++) {
             probability[i] = exp.processa(i);
@@ -45,7 +46,7 @@ public class ArvoreDeDecisao {
         return AUC.measure(Data.target, probability);
     }
 
-    public static int profit(ArithmeticExpressions exp) {
+    public static int profit(ArithmeticExpression exp) {
         int p = 0;
         for (int i = 0; i < Data.target.length; i++) {
             if (Math.round(exp.processa(i)) == 0 && Data.target[i] == 1) {
@@ -59,15 +60,15 @@ public class ArvoreDeDecisao {
         return p;
     }
 
-    public static double sigm(ArithmeticExpressions exp, int instancia) {
+    public static double sigm(ArithmeticExpression exp, int instancia) {
         return 1.0 / (1.0 + Math.pow(Math.E, -exp.processa(instancia)));
     }
 
-    public static double erro(ArithmeticExpressions exp, int instancia) {
+    public static double erro(ArithmeticExpression exp, int instancia) {
         return Math.pow(Data.target[instancia] - sigm(exp, instancia), 2);
     }
 
-    public static double erroFuncao(ArithmeticExpressions exp) {
+    public static double erroFuncao(ArithmeticExpression exp) {
         double e = 0.0;
 
         for (int i = 0; i < 1879; i++) {

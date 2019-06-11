@@ -12,7 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import Metrics.AUC;
-import Main.ArithmeticExpressions;
+import Arithmetic.ArithmeticExpression;
 
 /**
  *
@@ -25,7 +25,7 @@ public class RootWiseTree implements Runnable {
     private final int verboseEval;
     private final int verbosity;
     private int bestIteration;
-    private ArithmeticExpressions bestExpression;
+    private ArithmeticExpression bestExpression;
 
     /**
      *
@@ -45,7 +45,7 @@ public class RootWiseTree implements Runnable {
     public void run() {
         TreeGenerator g = new TreeGenerator(seed);
         bestExpression = g.geraAlturaTres();
-        ArithmeticExpressions e2 = (ArithmeticExpressions) bestExpression.clone();
+        ArithmeticExpression e2 = (ArithmeticExpression) bestExpression.clone();
         for (int i = 0; i < iterations; i++) {
             e2 = g.mutacao(e2);
             if (AUROC(e2) > AUROC(bestExpression)) {
@@ -67,7 +67,7 @@ public class RootWiseTree implements Runnable {
         writer.close();
     }
 
-    public double AUROC(ArithmeticExpressions exp) {
+    public double AUROC(ArithmeticExpression exp) {
         double[] probability = new double[Data.target.length];
         for (int i = 0; i < Data.target.length; i++) {
             probability[i] = exp.processa(i);

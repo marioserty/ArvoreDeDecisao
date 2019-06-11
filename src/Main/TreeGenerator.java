@@ -5,6 +5,13 @@
  */
 package Main;
 
+import Arithmetic.Subtraction;
+import Arithmetic.Addition;
+import Arithmetic.Constant;
+import Arithmetic.Multiplication;
+import Arithmetic.Variable;
+import Arithmetic.ArithmeticExpression;
+import Arithmetic.IfThenElse;
 import java.util.Random;
 import Reader.Data;
 
@@ -19,7 +26,7 @@ public class TreeGenerator {
         r = new Random(seed);
     }
     
-    public ArithmeticExpressions geraAlturaUm(){
+    public ArithmeticExpression geraAlturaUm(){
         if (r.nextDouble() < 0.5) {
             return new Constant(r.nextDouble() * 1000);
         }else{
@@ -27,23 +34,23 @@ public class TreeGenerator {
         }
     }
     
-    public ArithmeticExpressions geraAlturaDois(){
-        ArithmeticExpressions direita = geraAlturaUm();
-        ArithmeticExpressions esquerda = geraAlturaUm();
+    public ArithmeticExpression geraAlturaDois(){
+        ArithmeticExpression direita = geraAlturaUm();
+        ArithmeticExpression esquerda = geraAlturaUm();
         
         if (r.nextDouble() < 1.0/3.0) {
-            return new Sum(esquerda, direita);
+            return new Addition(esquerda, direita);
         }else if (r.nextDouble() < 2.0/3.0) {
-            return new Subtracao(esquerda, direita);
+            return new Subtraction(esquerda, direita);
         }else{
             return new Multiplication(esquerda, direita);
         }
         
     }
     
-    public ArithmeticExpressions geraAlturaTres(){
-        ArithmeticExpressions direita;
-        ArithmeticExpressions esquerda;
+    public ArithmeticExpression geraAlturaTres(){
+        ArithmeticExpression direita;
+        ArithmeticExpression esquerda;
         
         if (r.nextDouble() < 1.0/3.0) {
             direita = geraAlturaDois();
@@ -57,16 +64,16 @@ public class TreeGenerator {
         }
         
         if (r.nextDouble() < 1.0/3.0) {
-            return new Sum(esquerda, direita);
+            return new Addition(esquerda, direita);
         }else if (r.nextDouble() < 2.0/3.0) {
-            return new Subtracao(esquerda, direita);
+            return new Subtraction(esquerda, direita);
         }else{
             return new Multiplication(esquerda, direita);
         }
                 
     }
     
-    public ArithmeticExpressions mutacao(ArithmeticExpressions exp){
+    public ArithmeticExpression mutacao(ArithmeticExpression exp){
         /**apagar esquerda e gerar alt3, 2, apagar direita e gerar alt3, 2
         *trocar meio;
         */
@@ -76,36 +83,36 @@ public class TreeGenerator {
         if (d < 1.0/4.0) {
             double d2 = r.nextDouble();
             if (d2 < 1.0/3.0) {
-                return new Sum(mutacao(geraAlturaTres()), exp);
+                return new Addition(mutacao(geraAlturaTres()), exp);
             }else if (d2 < 2.0/3.0) {
-                return new Subtracao(mutacao(geraAlturaTres()), exp);
+                return new Subtraction(mutacao(geraAlturaTres()), exp);
             }else{
                 return new Multiplication(mutacao(geraAlturaTres()), exp);
             }
         }else if (d < 2.0/4.0) {
             double d2 = r.nextDouble();
             if (d2 < 1.0/3.0) {
-                return new Sum(exp, mutacao(geraAlturaTres()));
+                return new Addition(exp, mutacao(geraAlturaTres()));
             }else if (d2 < 2.0/3.0) {
-                return new Subtracao(exp, mutacao(geraAlturaTres()));
+                return new Subtraction(exp, mutacao(geraAlturaTres()));
             }else{
                 return new Multiplication(exp, mutacao(geraAlturaTres()));
             }
         }else if (d < 3.0/4.0){
             double d2 = r.nextDouble();
             if (d2 < 1.0/3.0) {
-                return new Sum(exp.getEsquerda(), geraAlturaDois());
+                return new Addition(exp.getEsquerda(), geraAlturaDois());
             }else if (d2 < 2.0/3.0) {
-                return new Subtracao(exp.getEsquerda(), geraAlturaDois());
+                return new Subtraction(exp.getEsquerda(), geraAlturaDois());
             }else{
                 return new Multiplication(exp.getEsquerda(), geraAlturaDois());
             }
         }else{
             double d2 = r.nextDouble();
             if (d2 < 1.0/3.0) {
-                return new Sum(geraAlturaDois(), exp.getDireita());
+                return new Addition(geraAlturaDois(), exp.getDireita());
             }else if (d2 < 2.0/3.0) {
-                return new Subtracao(geraAlturaDois(), exp.getDireita());
+                return new Subtraction(geraAlturaDois(), exp.getDireita());
             }else{
                 return new Multiplication(geraAlturaDois(), exp.getDireita());
             }
@@ -113,7 +120,7 @@ public class TreeGenerator {
         
     }
     
-    public ArithmeticExpressions geraITE_AlturaUm(){
+    public ArithmeticExpression geraITE_AlturaUm(){
         int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
         int label;
         
@@ -126,9 +133,9 @@ public class TreeGenerator {
         return new IfThenElse(variavel, label, geraAlturaTres(), geraAlturaTres());
     }
     
-    public ArithmeticExpressions geraITE_AlturaDois(){
-        ArithmeticExpressions esq = geraITE_AlturaUm();
-        ArithmeticExpressions dir = geraITE_AlturaUm();
+    public ArithmeticExpression geraITE_AlturaDois(){
+        ArithmeticExpression esq = geraITE_AlturaUm();
+        ArithmeticExpression dir = geraITE_AlturaUm();
         
         int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
         int label;
@@ -142,9 +149,9 @@ public class TreeGenerator {
         return new IfThenElse(variavel, label, esq, dir);
     }
     
-    public ArithmeticExpressions geraITE_AlturaTres(){
-        ArithmeticExpressions esq = geraITE_AlturaDois();
-        ArithmeticExpressions dir = geraITE_AlturaDois();
+    public ArithmeticExpression geraITE_AlturaTres(){
+        ArithmeticExpression esq = geraITE_AlturaDois();
+        ArithmeticExpression dir = geraITE_AlturaDois();
         
         int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
         int label;
@@ -158,9 +165,9 @@ public class TreeGenerator {
         return new IfThenElse(variavel, label, esq, dir);
     }
     
-    public ArithmeticExpressions geraITE_AlturaQuatro(){
-        ArithmeticExpressions esq = geraITE_AlturaTres();
-        ArithmeticExpressions dir = geraITE_AlturaTres();
+    public ArithmeticExpression geraITE_AlturaQuatro(){
+        ArithmeticExpression esq = geraITE_AlturaTres();
+        ArithmeticExpression dir = geraITE_AlturaTres();
         
         int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
         int label;
@@ -174,7 +181,7 @@ public class TreeGenerator {
         return new IfThenElse(variavel, label, esq, dir);
     }
     
-    public ArithmeticExpressions mutacaoIf(ArithmeticExpressions ite){
+    public ArithmeticExpression mutacaoIf(ArithmeticExpression ite){
         Random r = new Random();
         
         int n = r.nextInt(3);

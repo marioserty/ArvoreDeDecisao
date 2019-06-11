@@ -3,32 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Main;
+package Arithmetic;
 
 /**
  *
  * @author Mário
  */
-public final class Sum extends Binary {
+public class Subtraction extends Binary {
 
-    public Sum(ArithmeticExpressions esq, ArithmeticExpressions dir) {
+    public Subtraction(ArithmeticExpression esq, ArithmeticExpression dir) {
         super.direita = dir;
         super.esquerda = esq;
     }
 
     @Override
     public Object clone() {
-        return (ArithmeticExpressions) super.clone();
+        return (ArithmeticExpression) super.clone();
     }
 
     @Override
     public double processa(int instancia) {
-        return (super.getEsquerda().processa(instancia) + super.getDireita().processa(instancia));
+        return (super.getEsquerda().processa(instancia) - super.getDireita().processa(instancia));
     }
 
     @Override
     public String toString() {
-        return ("(" + super.getEsquerda().toString() + " + " + super.getDireita().toString() + ")");
+        return ("(" + super.getEsquerda().toString() + " - " + super.getDireita().toString() + ")");
     }
-
 }
