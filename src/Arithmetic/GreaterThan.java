@@ -5,7 +5,7 @@
  */
 package Arithmetic;
 
-import Reader.Data;
+import Data.Data;
 
 /**
  *
@@ -24,11 +24,11 @@ public class GreaterThan extends Binary {
     }
 
     @Override
-    public double process(int instance) {
-        if (Data.train[instance][getVariavel()] > getLabel()) {
-            return super.left.process(instance);
+    public double process(Data d, int instance) {
+        if (d.data[instance][getVariavel()] > getLabel()) {
+            return super.left.process(d, instance);
         } else {
-            return super.right.process(instance);
+            return super.right.process(d, instance);
         }
     }
 

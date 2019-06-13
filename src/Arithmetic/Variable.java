@@ -5,7 +5,7 @@
  */
 package Arithmetic;
 
-import Reader.Data;
+import Data.Data;
 
 /**
  *
@@ -25,13 +25,12 @@ public class Variable extends Unary {
     }
 
     @Override
-    public double process(int instancia) {
-        return Data.train[instancia][this.column];
+    public double process(Data d, int instancia) {
+        return d.data[instancia][this.column];
     }
 
-    @Override
-    public String toString() {
-        return "data[\'" + Data.columns[this.column] + "\']";
+    public String toString(Data d) {
+        return "data[\'" + d.columns[this.column] + "\']";
     }
 
     public void setColumn(int newId) {

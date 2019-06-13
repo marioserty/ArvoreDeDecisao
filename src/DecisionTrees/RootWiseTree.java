@@ -6,7 +6,7 @@
 package DecisionTrees;
 
 import Arithmetic.Addition;
-import Reader.Data;
+import Data.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,6 +31,7 @@ public class RootWiseTree implements Runnable {
     private final Random r;
     private int bestIteration;
     private ArithmeticExpression bestExpression;
+    private Data d;
 
     /**
      *
@@ -39,12 +40,13 @@ public class RootWiseTree implements Runnable {
      * @param verbosity 0 for silent, 1 otherwise
      * @param seed
      */
-    public RootWiseTree(int iterations, int verboseEval, int verbosity, int seed) {
+    public RootWiseTree(Data dataset, int iterations, int verboseEval, int verbosity, int seed) {
         this.iterations = iterations;
         this.seed = seed;
         this.verboseEval = verboseEval;
         this.verbosity = verbosity;
         this.r = new Random(seed);
+        this.d = dataset;
     }
 
     @Override
@@ -73,18 +75,18 @@ public class RootWiseTree implements Runnable {
     }
 
     public double AUROC(ArithmeticExpression exp) {
-        double[] probability = new double[Data.target.length];
-        for (int i = 0; i < Data.target.length; i++) {
-            probability[i] = exp.process(i);
+        double[] probability = new double[d.target.length];
+        for (int i = 0; i < d.target.length; i++) {
+            probability[i] = exp.process(d, i);
         }
-        return AUC.measure(Data.target, probability);
+        return AUC.measure(d.target, probability);
     }
 
     private ArithmeticExpression geraAlturaUm() {
         if (r.nextDouble() < 0.5) {
             return new Constant(r.nextDouble() * 1000);
         } else {
-            return new Variable((int) (r.nextDouble() * Data.trainNumCols - 1));
+            return new Variable((int) (r.nextDouble() * d.numCols - 1));
         }
     }
 
@@ -124,7 +126,6 @@ public class RootWiseTree implements Runnable {
         } else {
             return new Multiplication(esquerda, direita);
         }
-
     }
 
     private ArithmeticExpression mutacao(ArithmeticExpression exp) {

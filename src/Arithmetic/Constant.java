@@ -5,6 +5,8 @@
  */
 package Arithmetic;
 
+import Data.Data;
+
 /**
  *
  * @author Mário
@@ -17,17 +19,17 @@ public final class Constant extends Unary{
         this.value = v;
     }
     
+    @Override
     public Object clone(){
         return (ArithmeticExpression) super.clone();
     }
 
     @Override
-    public double process(int instancia) {
+    public double process(Data d, int instancia) {
         return this.value;
     }
 
-    @Override
-    public String toString() {
+    public String toString(Data d) {
         return Double.toString(value);
     }
     
@@ -37,11 +39,11 @@ public final class Constant extends Unary{
 
     @Override
     public ArithmeticExpression getRight() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Constant(value);
     }
 
     @Override
     public ArithmeticExpression getLeft() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Constant(value);
     }
 }

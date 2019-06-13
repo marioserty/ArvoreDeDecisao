@@ -6,9 +6,11 @@
 package DecisionTrees;
 
 import Arithmetic.ArithmeticExpression;
+import Arithmetic.Constant;
 import Arithmetic.GreaterThan;
+import Arithmetic.LessThan;
 import Metrics.AUC;
-import Reader.Data;
+import Data.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,10 +40,10 @@ public class LeafWiseTree implements Runnable {
 
     @Override
     public void run() {
-        /*bestExpression = geraAlturaTres();
+        bestExpression = generateDepthThree();
         ArithmeticExpression e2 = (ArithmeticExpression) bestExpression.clone();
         for (int i = 0; i < iterations; i++) {
-            e2 = mutacao(e2);
+            e2 = mutation(e2);
             if (AUROC(e2) > AUROC(bestExpression)) {
                 bestExpression = e2;
                 bestIteration = i;
@@ -52,11 +54,11 @@ public class LeafWiseTree implements Runnable {
                 System.out.println("Iteration " + i + "/" + iterations + " AUC: " + AUROC(bestExpression));
             }
         }
-        System.out.println("Best iteration: " + bestIteration + " AUC: " + AUROC(bestExpression));*/
+        System.out.println("Best iteration: " + bestIteration + " AUC: " + AUROC(bestExpression));
     }
 
-    public void saveTreeCode(String filePath) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("formulas.txt"));
+    public void saveTreeCode(String fileName) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write(bestExpression.toString());
         writer.close();
     }
@@ -68,93 +70,104 @@ public class LeafWiseTree implements Runnable {
         }
         return AUC.measure(Data.target, probability);
     }
-    
+
+//    public ArithmeticExpression generateInequality() {
+//        int variable = r.nextInt(Data.trainNumCols - 1);
+//        double label = Data.train[variable][r.nextInt(Data.trainNumRows - 1)];
+//
+//        if (r.nextDouble() < 0.5) {
+//            return new GreaterThan(variable, label, generateClassifier(), generateClassifier());
+//        } else {
+//            return new LessThan(variable, label, generateClassifier(), generateClassifier());
+//        }
+//    }
+//
+//    public ArithmeticExpression generateClassifier() {
+//        return new Constant(r.nextDouble());
+//    }
     public ArithmeticExpression generateDepthOne() {
-        int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
-        int label;
-
-        if (r.nextDouble() < 0.5) {
-            label = 0;
-        } else {
-            label = 1;
-        }
-
-        return new GreaterThan(variavel, label, geraAlturaTres(), geraAlturaTres());
+        return new Constant(r.nextDouble());
     }
 
     public ArithmeticExpression generateDepthTwo() {
-        ArithmeticExpression esq = generateDepthOne();
-        ArithmeticExpression dir = generateDepthOne();
+        ArithmeticExpression left = generateDepthOne();
+        ArithmeticExpression right = generateDepthOne();
 
-        int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
-        int label;
-
-        if (r.nextDouble() < 0.5) {
-            label = 0;
-        } else {
-            label = 1;
-        }
-
-        return new GreaterThan(variavel, label, esq, dir);
-    }
-
-    public ArithmeticExpression geraITE_AlturaTres() {
-        ArithmeticExpression esq = geraITE_AlturaDois();
-        ArithmeticExpression dir = geraITE_AlturaDois();
-
-        int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
-        int label;
+        int variable = r.nextInt(Data.trainNumCols - 1);
+        double label = Data.train[r.nextInt(Data.trainNumRows - 1)][variable];
 
         if (r.nextDouble() < 0.5) {
-            label = 0;
+            return new GreaterThan(variable, label, generateDepthOne(), generateDepthOne());
         } else {
-            label = 1;
+            return new LessThan(variable, label, generateDepthOne(), generateDepthOne());
         }
-
-        return new GreaterThan(variavel, label, esq, dir);
     }
 
-    public ArithmeticExpression geraITE_AlturaQuatro() {
-        ArithmeticExpression esq = geraITE_AlturaTres();
-        ArithmeticExpression dir = geraITE_AlturaTres();
+    public ArithmeticExpression generateDepthThree() {
+        ArithmeticExpression left;
+        ArithmeticExpression right;
 
-        int variavel = (int) (r.nextDouble() * Data.trainNumCols - 1);
-        int label;
+        if (r.nextDouble() < 1.0 / 3.0) {
+            left = generateDepthTwo();
+            right = generateDepthOne();
+        } else if (r.nextDouble() < 2.0 / 3.0) {
+            left = generateDepthOne();
+            right = generateDepthTwo();
+        } else {
+            left = generateDepthTwo();
+            right = generateDepthTwo();
+        }
+
+        int variable = r.nextInt(Data.trainNumCols - 1);
+        double label = Data.train[r.nextInt(Data.trainNumRows - 1)][variable];
 
         if (r.nextDouble() < 0.5) {
-            label = 0;
+            return new GreaterThan(variable, label, generateDepthOne(), generateDepthOne());
         } else {
-            label = 1;
+            return new LessThan(variable, label, generateDepthOne(), generateDepthOne());
         }
-
-        return new GreaterThan(variavel, label, esq, dir);
     }
 
-    public ArithmeticExpression mutacaoIf(ArithmeticExpression ite) {
-        Random r = new Random();
+    public ArithmeticExpression mutation(ArithmeticExpression exp) {
+        /**
+         * apagar esquerda e gerar alt3, 2, apagar direita e gerar alt3, 2
+         * trocar meio;
+         */
 
-        int n = r.nextInt(3);
+        int variable = r.nextInt(Data.trainNumCols - 1);
+        double label = Data.train[r.nextInt(Data.trainNumRows - 1)][variable];
 
-        if (ite instanceof GreaterThan) {
-            switch (n) {
-                case 0:
-                    int x = r.nextInt(Data.trainNumCols - 1);
-                    ((GreaterThan) ite).setLabel(x);
-                    break;
-                case 1:
-                    this.mutacaoIf(((GreaterThan) ite).getLeft());
-                    break;
-                default:
-                    this.mutacaoIf(((GreaterThan) ite).getRight());
-                    break;
+        double d = r.nextDouble();
+
+        if (d < 1.0 / 4.0) {
+            double d2 = r.nextDouble();
+            if (r.nextDouble() < 0.5) {
+                return new GreaterThan(variable, label, mutation(generateDepthOne()), generateDepthOne());
+            } else {
+                return new LessThan(variable, label, mutation(generateDepthOne()), generateDepthOne());
             }
-            return ite;
+        } else if (d < 2.0 / 4.0) {
+            double d2 = r.nextDouble();
+            if (r.nextDouble() < 0.5) {
+                return new GreaterThan(variable, label, generateDepthOne(), mutation(generateDepthOne()));
+            } else {
+                return new LessThan(variable, label, generateDepthOne(), mutation(generateDepthOne()));
+            }
+        } else if (d < 3.0 / 4.0) {
+            double d2 = r.nextDouble();
+            if (r.nextDouble() < 0.5) {
+                return new GreaterThan(variable, label, exp.getLeft(), (generateDepthTwo()));
+            } else {
+                return new LessThan(variable, label, exp.getLeft(), (generateDepthTwo()));
+            }
         } else {
-            mutacao(ite);
+            double d2 = r.nextDouble();
+            if (r.nextDouble() < 0.5) {
+                return new GreaterThan(variable, label, exp.getLeft(), (generateDepthTwo()));
+            } else {
+                return new LessThan(variable, label, exp.getLeft(), (generateDepthTwo()));
+            }
         }
-
-        return ite;
-
     }
 
 }

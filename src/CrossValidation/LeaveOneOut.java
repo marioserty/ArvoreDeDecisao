@@ -5,7 +5,7 @@
  */
 package CrossValidation;
 
-import Reader.Data;
+import Data.Data;
 import Arithmetic.ArithmeticExpression;
 
 /**

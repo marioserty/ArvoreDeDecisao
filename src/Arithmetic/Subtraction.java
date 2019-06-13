@@ -5,6 +5,8 @@
  */
 package Arithmetic;
 
+import Data.Data;
+
 /**
  *
  * @author Mário
@@ -22,8 +24,8 @@ public class Subtraction extends Binary {
     }
 
     @Override
-    public double process(int instancia) {
-        return (super.getLeft().process(instancia) - super.getRight().process(instancia));
+    public double process(Data d, int instancia) {
+        return (super.getLeft().process(d, instancia) - super.getRight().process(d, instancia));
     }
 
     @Override

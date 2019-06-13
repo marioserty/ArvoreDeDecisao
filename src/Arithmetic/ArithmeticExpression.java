@@ -5,15 +5,16 @@
  */
 package Arithmetic;
 
+import Data.Data;
+
 /**
  *
  * @author Mário
  */
 public interface ArithmeticExpression extends Cloneable{
     
-    public double process(int instance);
+    public double process(Data data, int instance);
     
-    @Override
     public String toString();
     
     public Object clone();
