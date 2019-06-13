@@ -29,13 +29,15 @@ public class LeafWiseTree implements Runnable {
     private final Random r;
     private int bestIteration;
     private ArithmeticExpression bestExpression;
+    private Data d;
 
-    public LeafWiseTree(int iterations, int verboseEval, int verbosity, int seed) {
+    public LeafWiseTree(Data d, int iterations, int verboseEval, int verbosity, int seed) {
         this.iterations = iterations;
         this.seed = seed;
         this.verboseEval = verboseEval;
         this.verbosity = verbosity;
         this.r = new Random(seed);
+        this.d = d;
     }
 
     @Override
@@ -64,27 +66,13 @@ public class LeafWiseTree implements Runnable {
     }
 
     public double AUROC(ArithmeticExpression exp) {
-        double[] probability = new double[Data.target.length];
-        for (int i = 0; i < Data.target.length; i++) {
-            probability[i] = exp.process(i);
+        double[] probability = new double[d.target.length];
+        for (int i = 0; i < d.target.length; i++) {
+            probability[i] = exp.process(d, i);
         }
-        return AUC.measure(Data.target, probability);
+        return AUC.measure(d.target, probability);
     }
 
-//    public ArithmeticExpression generateInequality() {
-//        int variable = r.nextInt(Data.trainNumCols - 1);
-//        double label = Data.train[variable][r.nextInt(Data.trainNumRows - 1)];
-//
-//        if (r.nextDouble() < 0.5) {
-//            return new GreaterThan(variable, label, generateClassifier(), generateClassifier());
-//        } else {
-//            return new LessThan(variable, label, generateClassifier(), generateClassifier());
-//        }
-//    }
-//
-//    public ArithmeticExpression generateClassifier() {
-//        return new Constant(r.nextDouble());
-//    }
     public ArithmeticExpression generateDepthOne() {
         return new Constant(r.nextDouble());
     }
@@ -93,8 +81,8 @@ public class LeafWiseTree implements Runnable {
         ArithmeticExpression left = generateDepthOne();
         ArithmeticExpression right = generateDepthOne();
 
-        int variable = r.nextInt(Data.trainNumCols - 1);
-        double label = Data.train[r.nextInt(Data.trainNumRows - 1)][variable];
+        int variable = r.nextInt(d.numCols - 1);
+        double label = d.data[r.nextInt(d.numRows - 1)][variable];
 
         if (r.nextDouble() < 0.5) {
             return new GreaterThan(variable, label, generateDepthOne(), generateDepthOne());
@@ -118,8 +106,8 @@ public class LeafWiseTree implements Runnable {
             right = generateDepthTwo();
         }
 
-        int variable = r.nextInt(Data.trainNumCols - 1);
-        double label = Data.train[r.nextInt(Data.trainNumRows - 1)][variable];
+        int variable = r.nextInt(d.numCols - 1);
+        double label = d.data[r.nextInt(d.numRows - 1)][variable];
 
         if (r.nextDouble() < 0.5) {
             return new GreaterThan(variable, label, generateDepthOne(), generateDepthOne());
@@ -134,8 +122,8 @@ public class LeafWiseTree implements Runnable {
          * trocar meio;
          */
 
-        int variable = r.nextInt(Data.trainNumCols - 1);
-        double label = Data.train[r.nextInt(Data.trainNumRows - 1)][variable];
+        int variable = r.nextInt(d.numCols - 1);
+        double label = d.data[r.nextInt(d.numRows - 1)][variable];
 
         double d = r.nextDouble();
 
