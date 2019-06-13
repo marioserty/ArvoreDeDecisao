@@ -20,6 +20,10 @@ public class KFold implements Validation {
     private ArrayList<int[]> trainIndex;
     private ArrayList<int[]> testIndex;
     private Data data;
+    private Data train;
+    private Data test;
+    private int start;
+    private int end;
 
     public KFold(Data data, int k) {
         this.data = data;
@@ -27,6 +31,20 @@ public class KFold implements Validation {
         testLenght = data.numRows / nFolds;
         trainIndex = new ArrayList<>();
         testIndex = new ArrayList<>();
+        start = 0;
+        end = testLenght;
+        currentFold = 0;
+    }
+
+    public boolean nextFold() {
+        if (getCurrentFold() == nFolds) {
+            return false;
+        } else {
+            train = data.subset(trainIndex.get(getCurrentFold()));
+            test = data.subset(testIndex.get(getCurrentFold()));
+            setCurrentFold(getCurrentFold() + 1);
+            return true;
+        }
     }
 
     public void split() {
@@ -84,5 +102,17 @@ public class KFold implements Validation {
 
     public ArrayList<int[]> getTestIndex() {
         return testIndex;
+    }
+
+    public void setCurrentFold(int currentFold) {
+        this.currentFold = currentFold;
+    }
+
+    public Data getTrain() {
+        return train;
+    }
+
+    public Data getTest() {
+        return test;
     }
 }

@@ -73,6 +73,14 @@ public class RootWiseTree implements Runnable {
         writer.write(bestExpression.toString());
         writer.close();
     }
+    
+    public double[] predict(Data d){
+        double[] preds = new double[d.numRows];
+        for (int i = 0; i < preds.length; i++) {
+            preds[i] = bestExpression.process(d, i);
+        }
+        return preds;
+    }
 
     public double AUROC(ArithmeticExpression exp) {
         double[] probability = new double[d.target.length];

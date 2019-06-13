@@ -25,37 +25,32 @@ public class ArvoreDeDecisao {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
-        Data train = new Data("train0.csv", 534, 257, ",", true);
+        Data train = new Data();
+        train.Read("train0.csv", 534, 257, ",", true);
         System.out.println("Data info:");
         System.out.println("Data shape: (" + train.numRows + "," + train.numCols + ")");
 
-        int iterations = 1_000;
+        int iterations = 5000;
         int verbosity = 1;
         int verboseEval = 100;
         int seed = 1997;
 
+        double[] preds;
+        
         KFold kfold = new KFold(train, 5);
         kfold.split();
-        for (int k = 0; k < kfold.getnFolds(); k++) {
-            RootWiseTree rwt = new RootWiseTree(train, iterations, verboseEval, verbosity, seed);
+        while (kfold.nextFold()) {            
+            RootWiseTree rwt = new RootWiseTree(kfold.getTrain(), iterations, verboseEval, verbosity, seed);
             rwt.run();
-//            System.out.println("Fold " + k + 1 + " AUC: " + );
+            preds = rwt.predict(kfold.getTest());
+            System.out.println("Fold " + kfold.getCurrentFold() + " AUC: " + AUC.measure(kfold.getTest().target, preds));
         }
 
-        RootWiseTree rwt = new RootWiseTree(train, iterations, verboseEval, verbosity, seed);
-        rwt.run();
-        rwt.saveTreeEquation("eq.txt");
-        LeafWiseTree lft = new LeafWiseTree(iterations, verboseEval, verbosity, seed);
-        lft.run();
-
-    }
-
-    public double AUROC(Data d, ArithmeticExpression exp) {
-        double[] probability = new double[d.target.length];
-        for (int i = 0; i < d.target.length; i++) {
-            probability[i] = exp.process(d, i);
-        }
-        return AUC.measure(d.target, probability);
+//        RootWiseTree rwt = new RootWiseTree(train, iterations, verboseEval, verbosity, seed);
+//        rwt.run();
+//        rwt.saveTreeEquation("eq.txt");
+//        LeafWiseTree lft = new LeafWiseTree(iterations, verboseEval, verbosity, seed);
+//        lft.run();
     }
 
 }

@@ -20,11 +20,11 @@ public class Data {
 
     public double[][] data;
     public int[] target;
-    public  int numRows;
+    public int numRows;
     public int numCols;
     public String[] columns;
 
-    public Data(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
+    public void Read(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
         numRows = nRows;
         numCols = nCols;
         data = new double[numRows][numCols - 1];
@@ -43,6 +43,23 @@ public class Data {
                 target[i] = Integer.valueOf(values[values.length - 1]);
             }
         }
+    }
+
+    public Data subset(int[] indexes) {
+        Data newData = new Data();
+        newData.columns = this.columns;
+        newData.numCols = this.numCols;
+        newData.numRows = indexes.length;
+        newData.target = new int[newData.numRows];
+        newData.data = new double[newData.numRows][numCols - 1];
+
+        for (int i = 0; i < indexes.length; i++) {
+            for (int j = 0; j < numCols - 1; j++) {
+                newData.data[i][j] = this.data[indexes[i]][j];
+            }
+            newData.target[i] = this.target[indexes[i]];
+        }
+        return newData;
     }
 
     public void columnsNames() {
