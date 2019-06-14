@@ -15,6 +15,7 @@ public interface ArithmeticExpression extends Cloneable{
     
     public double process(Data data, int instance);
     
+    @Override
     public String toString();
     
     public Object clone();

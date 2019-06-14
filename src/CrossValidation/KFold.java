@@ -38,8 +38,8 @@ public class KFold implements Validation {
 
     public boolean nextFold() {
         if (getCurrentFold() < nFolds) {
-            train = data.subset(trainIndex.get(getCurrentFold()));
-            test = data.subset(testIndex.get(getCurrentFold()));
+            train = data.subsetForFold(trainIndex.get(getCurrentFold()));
+            test = data.subsetForFold(testIndex.get(getCurrentFold()));
             setCurrentFold(getCurrentFold() + 1);
             return true;
         } else {

@@ -53,16 +53,24 @@ public class LeafWiseTree implements Runnable {
                 e2 = bestExpression;
             }
             if (i % verboseEval == 0 && verbosity == 1) {
-                System.out.println("Iteration " + i + "/" + iterations + " AUC: " + AUROC(bestExpression));
+                System.out.println("Iteration " + i + "/" + iterations + "\t train-AUC: " + AUROC(bestExpression));
             }
         }
-        System.out.println("Best iteration: " + bestIteration + " AUC: " + AUROC(bestExpression));
+        System.out.println("Best iteration: " + bestIteration + "\t AUC: " + AUROC(bestExpression));
     }
 
     public void saveTreeCode(String fileName) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
         writer.write(bestExpression.toString());
         writer.close();
+    }
+
+    public double[] predict(Data d) {
+        double[] preds = new double[d.numRows];
+        for (int i = 0; i < preds.length; i++) {
+            preds[i] = bestExpression.process(d, i);
+        }
+        return preds;
     }
 
     public double AUROC(ArithmeticExpression exp) {
