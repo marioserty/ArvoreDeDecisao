@@ -62,10 +62,10 @@ public class RootWiseTree implements Runnable {
                 e2 = bestExpression;
             }
             if (i % verboseEval == 0 && verbosity == 1) {
-                System.out.println("Iteration " + i + "/" + iterations + " AUC: " + AUROC(bestExpression));
+                System.out.println("Iteration " + i + "/" + iterations + " train AUC: " + AUROC(bestExpression));
             }
         }
-        System.out.println("Best iteration: " + bestIteration + " AUC: " + AUROC(bestExpression));
+        System.out.println("Best iteration: " + bestIteration + " train AUC: " + AUROC(bestExpression));
     }
 
     public void saveTreeEquation(String filePath) throws IOException {

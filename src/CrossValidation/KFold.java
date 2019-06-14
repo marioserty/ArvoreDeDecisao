@@ -37,13 +37,13 @@ public class KFold implements Validation {
     }
 
     public boolean nextFold() {
-        if (getCurrentFold() == nFolds) {
-            return false;
-        } else {
+        if (getCurrentFold() < nFolds) {
             train = data.subset(trainIndex.get(getCurrentFold()));
             test = data.subset(testIndex.get(getCurrentFold()));
             setCurrentFold(getCurrentFold() + 1);
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -83,7 +83,7 @@ public class KFold implements Validation {
                 train++;
             }
         }
-        getTrainIndex().add(testFold);
+        getTrainIndex().add(trainFold);
         getTestIndex().add(testFold);
 
     }
@@ -92,7 +92,7 @@ public class KFold implements Validation {
         return nFolds;
     }
 
-    public int getCurrentFold() {
+    private int getCurrentFold() {
         return currentFold;
     }
 
@@ -104,7 +104,7 @@ public class KFold implements Validation {
         return testIndex;
     }
 
-    public void setCurrentFold(int currentFold) {
+    private void setCurrentFold(int currentFold) {
         this.currentFold = currentFold;
     }
 

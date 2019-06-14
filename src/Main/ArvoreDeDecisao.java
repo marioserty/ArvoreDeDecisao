@@ -30,7 +30,7 @@ public class ArvoreDeDecisao {
         System.out.println("Data info:");
         System.out.println("Data shape: (" + train.numRows + "," + train.numCols + ")");
 
-        int iterations = 5000;
+        int iterations = 2_200;
         int verbosity = 1;
         int verboseEval = 100;
         int seed = 1997;
@@ -39,18 +39,14 @@ public class ArvoreDeDecisao {
         
         KFold kfold = new KFold(train, 5);
         kfold.split();
+        int k = 1;
         while (kfold.nextFold()) {            
             RootWiseTree rwt = new RootWiseTree(kfold.getTrain(), iterations, verboseEval, verbosity, seed);
             rwt.run();
             preds = rwt.predict(kfold.getTest());
-            System.out.println("Fold " + kfold.getCurrentFold() + " AUC: " + AUC.measure(kfold.getTest().target, preds));
+            System.out.println("Fold " + k + " AUC: " + AUC.measure(kfold.getTest().target, preds));
+            k++;
         }
-
-//        RootWiseTree rwt = new RootWiseTree(train, iterations, verboseEval, verbosity, seed);
-//        rwt.run();
-//        rwt.saveTreeEquation("eq.txt");
-//        LeafWiseTree lft = new LeafWiseTree(iterations, verboseEval, verbosity, seed);
-//        lft.run();
     }
 
 }
