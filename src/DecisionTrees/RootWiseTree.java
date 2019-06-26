@@ -64,7 +64,9 @@ public class RootWiseTree extends Thread {
             } else {
                 currentExp = bestExp;
             }
-            System.out.println("Iteration " + i + "/" + iterations + " train-AUC: " + EvaluateTrain(bestExp));
+            System.out.println("Iteration " + i + "\t"
+                    + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateTrain(bestExp)) + "\t"
+                    + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateTest(bestExp)));
         }
         return bestExp;
     }

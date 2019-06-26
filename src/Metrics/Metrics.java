@@ -12,4 +12,6 @@ package Metrics;
 public interface Metrics {
 
     public double measure(int[] label, double[] preds);
+    
+    public String getName();
 }

@@ -32,6 +32,12 @@ public class KFold implements Validation {
         for (int i = 0; i < Data.numRows; i++) {
             validIndexes[i % nFolds].add(i);
         }
+        for (int i = 0; i < nFolds; i++) {
+            for (int j = 0; j < Data.numRows; j++) {
+                if(!validIndexes[i].contains(j))
+                    trainIndexes[i].add(j);
+            }
+        }
     }
 
     public ArrayList[] getTrainIndexes() {

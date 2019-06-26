@@ -97,4 +97,9 @@ public class AUC implements Metrics{
         auc = (auc - (pos * (pos+1) / 2.0)) / (pos * neg);
         return auc;
     }
+
+    @Override
+    public String getName() {
+        return "AUC";
+    }
 }

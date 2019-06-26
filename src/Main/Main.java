@@ -24,27 +24,19 @@ public class Main {
 
         //Dataset reading
         Data.CustomRead("datasets/readmission_data_for_modeling.csv", 25000, 83, ",");
-        for (int i = 0; i < Data.target.length; i++) {
-            System.out.println(Data.target[i]);
-        }
         // Tree parameters
         int seed = 1980;
-        int iterations = 100_000;
+        int iterations = 1_00;
         int k = 5;
-        
+
         RootWiseTree rwt = new RootWiseTree(iterations, 100, 500, seed, new AUC());
         KFold kfold = new KFold(k);
         kfold.split();
-        
-        for (int i = 0; i < kfold.getTrainIndexes()[0].size(); i++) {
-            System.out.println(kfold.getTrainIndexes()[0].get(i));
-        }
-        
-//        rwt.setValSets(kfold.getTrainIndexes()[0], kfold.getValidIndexes()[0]);
-//        rwt.train();
-        
+
         for (int i = 0; i < k; i++) {
-                        
+
+            rwt.setValSets(kfold.getTrainIndexes()[i], kfold.getValidIndexes()[i]);
+            rwt.train();
         }
     }
 
