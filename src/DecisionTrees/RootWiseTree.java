@@ -64,6 +64,7 @@ public class RootWiseTree extends Thread {
             } else {
                 currentExp = bestExp;
             }
+            System.out.println("Iteration " + i + "/" + iterations + " train-AUC: " + EvaluateTrain(bestExp));
         }
         return bestExp;
     }
@@ -87,18 +88,18 @@ public class RootWiseTree extends Thread {
         int[] target = new int[trainIndexes.size()];
 
         for (int i = 0; i < preds.length; i++) {
-            preds[i] = exp.process(valIndexes.get(i));
-            target[i] = Data.target[valIndexes.get(i)];
+            preds[i] = exp.process(trainIndexes.get(i));
+            target[i] = Data.target[trainIndexes.get(i)];
         }
         return metric.measure(target, preds);
     }
 
     public double EvaluateTest(ArithmeticExpression exp) {
-        
+
         double[] preds = new double[valIndexes.size()];
         int[] target = new int[valIndexes.size()];
-        
-        for (int i = 0; i < preds.length; i++) {            
+
+        for (int i = 0; i < preds.length; i++) {
             preds[i] = exp.process(valIndexes.get(i));
             target[i] = Data.target[valIndexes.get(i)];
         }

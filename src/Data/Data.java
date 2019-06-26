@@ -24,53 +24,48 @@ public class Data {
     public static int numCols;
     public static String[] columns;
 
-    public static void Read(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
+    public static void Read(String filePath, int nRows, int nCols, String del) throws IOException {
         numRows = nRows;
         numCols = nCols;
-        data = new double[numRows][numCols - 1];
+        data = new double[numRows][numCols];
         target = new int[numRows];
         BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
         columns = buffer.readLine().split(del);
 
-        for (int i = 0; buffer.ready(); i++) {
+        for (int i = 0; i < numRows; i++) {
 
             String line = buffer.readLine();
             String[] values = line.split(del);
-            for (int j = 0; j < values.length - 1; j++) {
+            for (int j = 0; j < numCols; j++) {
                 data[i][j] = Double.valueOf(values[j]);
             }
-            if (train) {
-                target[i] = Integer.valueOf(values[values.length - 1]);
-            }
+            target[i] = Integer.valueOf(values[values.length - 1]);
         }
     }
 
-    public static void CustomRead(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
+    public static void CustomRead(String filePath, int nRows, int nCols, String del) throws IOException {
         numRows = nRows;
         numCols = nCols;
-        data = new double[numRows][numCols - 1];
+        data = new double[numRows][numCols];
         target = new int[numRows];
         BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
         columns = buffer.readLine().split(del);
 
-        for (int i = 0; buffer.ready(); i++) {
-
+        for (int i = 0; i < numRows; i++) {
             String line = buffer.readLine();
             String[] values = line.split(del);
-            for (int j = 0; j < values.length - 1; j++) {
+            for (int j = 0; j < numCols; j++) {
                 if (values[j].equals("True")) {
                     data[i][j] = 1;
                 } else if (values[j].equals("False")) {
                     data[i][j] = 0;
-                } else if("".equals(values[j])){
+                } else if ("".equals(values[j])) {
                     data[i][j] = 0.0;
-                }else{
+                } else {
                     data[i][j] = Double.valueOf(values[j]);
                 }
             }
-            if (train) {
-                target[i] = Integer.valueOf(values[values.length - 1]);
-            }
+            target[i] = Integer.valueOf(values[values.length - 1]);
         }
     }
 
