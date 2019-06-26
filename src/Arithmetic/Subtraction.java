@@ -24,12 +24,12 @@ public class Subtraction extends Binary {
     }
 
     @Override
-    public double process(Data d, int instancia) {
-        return (super.getLeft().process(d, instancia) - super.getRight().process(d, instancia));
+    public double process(int instancia) {
+        return (super.getLeft().process(instancia) - super.getRight().process(instancia));
     }
 
     @Override
-    public String toString(Data d) {
-        return ("(" + super.getLeft().toString(d) + " - " + super.getRight().toString(d) + ")");
+    public String toString() {
+        return ("(" + super.getLeft().toString() + " - " + super.getRight().toString() + ")");
     }
 }

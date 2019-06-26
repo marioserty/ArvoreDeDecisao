@@ -25,7 +25,7 @@ public final class Constant extends Unary{
     }
 
     @Override
-    public double process(Data d, int instancia) {
+    public double process(int instancia) {
         return this.value;
     }
 

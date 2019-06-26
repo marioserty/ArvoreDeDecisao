@@ -16,18 +16,23 @@ import Arithmetic.Constant;
 import Arithmetic.Multiplication;
 import Arithmetic.Subtraction;
 import Arithmetic.Variable;
+import Metrics.Metrics;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
  *
  * @author mario
  */
-public class RootWiseTree extends Thread{
+public class RootWiseTree extends Thread {
 
     private final int iterations;
     private final int verboseEval;
     private final Random seed;
     private ArithmeticExpression[] forest;
+    private ArrayList<Integer> trainIndexes;
+    private ArrayList<Integer> valIndexes;
+    private Metrics metric;
 
     /**
      *
@@ -36,19 +41,25 @@ public class RootWiseTree extends Thread{
      * @param forestSize
      * @param seed
      */
-    public RootWiseTree(int iterations, int verboseEval, int forestSize, int seed) {
+    public RootWiseTree(int iterations, int verboseEval, int forestSize, int seed, Metrics metric) {
         this.iterations = iterations;
         this.verboseEval = verboseEval;
         this.seed = new Random(seed);
+        this.metric = metric;
         forest = new ArithmeticExpression[forestSize];
     }
 
-    public ArithmeticExpression train(int[] trainingIndexes) {
+    public void setValSets(ArrayList<Integer> train, ArrayList<Integer> valid) {
+        trainIndexes = train;
+        valIndexes = valid;
+    }
+
+    public ArithmeticExpression train() {
         ArithmeticExpression bestExp = geraAlturaTres();
         ArithmeticExpression currentExp = (ArithmeticExpression) bestExp.clone();
         for (int i = 0; i < iterations; i++) {
             currentExp = mutacao(currentExp);
-            if (AUROC(currentExp) > AUROC(bestExp)) {
+            if (EvaluateTrain(currentExp) > EvaluateTrain(bestExp)) {
                 bestExp = currentExp;
             } else {
                 currentExp = bestExp;
@@ -56,38 +67,49 @@ public class RootWiseTree extends Thread{
         }
         return bestExp;
     }
-    
-    public void train(Data d){
-        
-    }
 
-    public void saveTreeEquation(String fileName) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("equations/"+fileName))) {
-            writer.write(bestExpression.toString(d));
+    public void saveExpressions(String fileName) {
+        BufferedWriter writer;
+        try {
+            for (int i = 0; i < forest.length; i++) {
+                writer = new BufferedWriter(new FileWriter("expressions/" + fileName + "_" + i + ".txt"));
+                writer.write(forest[i].toString());
+            }
+            System.out.println("Expressions saved successfully!");
+        } catch (IOException ex) {
+            System.out.println("Error while writing expression: " + ex.getMessage());
         }
     }
-    
-    public double[] predict(Data d){
-        double[] preds = new double[d.numRows];
+
+    public double EvaluateTrain(ArithmeticExpression exp) {
+
+        double[] preds = new double[trainIndexes.size()];
+        int[] target = new int[trainIndexes.size()];
+
         for (int i = 0; i < preds.length; i++) {
-            preds[i] = bestExpression.process(d, i);
+            preds[i] = exp.process(valIndexes.get(i));
+            target[i] = Data.target[valIndexes.get(i)];
         }
-        return preds;
+        return metric.measure(target, preds);
     }
 
-    public double AUROC(ArithmeticExpression exp, int[] testIndexes) {
-        double[] probability = new double[testIndexes.];
-        for (int i = 0; i < d.target.length; i++) {
-            probability[i] = exp.process(d, i);
+    public double EvaluateTest(ArithmeticExpression exp) {
+        
+        double[] preds = new double[valIndexes.size()];
+        int[] target = new int[valIndexes.size()];
+        
+        for (int i = 0; i < preds.length; i++) {            
+            preds[i] = exp.process(valIndexes.get(i));
+            target[i] = Data.target[valIndexes.get(i)];
         }
-        return AUC.measure(d.target, probability);
+        return metric.measure(target, preds);
     }
 
     private ArithmeticExpression geraAlturaUm() {
         if (seed.nextDouble() < 0.5) {
             return new Constant(seed.nextDouble());
         } else {
-            return new Variable((int) (seed.nextDouble() * d.numCols - 1));
+            return new Variable((int) (seed.nextDouble() * Data.numCols - 1));
         }
     }
 

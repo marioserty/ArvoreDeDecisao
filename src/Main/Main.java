@@ -23,20 +23,10 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
 
         //Dataset reading
-        Data train = new Data();
-//        train.Read("datasets/kyphosis_reshape.csv", 81, 4, ",", true);
-//        train.CustomRead("datasets/readmission_data_for_modeling.csv", 25000, 83, ",", true);
-        train.Read("datasets/arquivoX2.csv", 199981, 10, ",", true);
-//        test = train.splitTrainTest(0.7);
-        System.out.println("Data info:");
-        System.out.println("Data shape: (" + train.numRows + "," + train.numCols + ")");
-        train.columnsNames();
 
         // Tree parameters
         int seed = 1980;
         int iterations = 100;
-        int verbosity = 1;
-        int verboseEval = 1;
         int nfolds = 5;
 
         double[] preds;
@@ -57,7 +47,7 @@ public class Main {
 
             meanAUC += AUC.measure(kfold.getTest().target, preds);
             System.out.println("Fold " + k + " AUC: " + AUC.measure(kfold.getTest().target, preds));
-            rwt.saveTreeEquation("tree_fold_" + k + ".txt");
+            rwt.saveExpressions("tree_fold_" + k + ".txt");
             k++;
         }
         System.out.println("Mean AUC: " + meanAUC / nfolds);
