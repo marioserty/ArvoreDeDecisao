@@ -18,13 +18,13 @@ import java.io.PrintWriter;
  */
 public class Data {
 
-    public double[][] data;
-    public int[] target;
-    public int numRows;
-    public int numCols;
-    public String[] columns;
+    public static double[][] data;
+    public static int[] target;
+    public static int numRows;
+    public static int numCols;
+    public static String[] columns;
 
-    public void Read(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
+    public static void Read(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
         numRows = nRows;
         numCols = nCols;
         data = new double[numRows][numCols - 1];
@@ -45,7 +45,7 @@ public class Data {
         }
     }
 
-    public void CustomRead(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
+    public static void CustomRead(String filePath, int nRows, int nCols, String del, boolean train) throws IOException {
         numRows = nRows;
         numCols = nCols;
         data = new double[numRows][numCols - 1];
@@ -74,56 +74,10 @@ public class Data {
         }
     }
 
-    public Data subsetForFold(int[] indexes) {
-        Data newData = new Data();
-        newData.columns = this.columns;
-        newData.numCols = this.numCols;
-        newData.numRows = indexes.length;
-        newData.target = new int[newData.numRows];
-        newData.data = new double[newData.numRows][numCols - 1];
-
-        for (int i = 0; i < indexes.length; i++) {
-            for (int j = 0; j < numCols - 1; j++) {
-                newData.data[i][j] = this.data[indexes[i]][j];
-            }
-            newData.target[i] = this.target[indexes[i]];
-        }
-        return newData;
-    }
-
-    public Data splitTrainTest(double trainSize) {
-        int endIndex = (int) (numRows * trainSize);
-        System.out.println(endIndex);
-        System.out.println(numRows - endIndex);
-        Data newData = new Data();
-        newData.columns = this.columns;
-        newData.numCols = this.numCols;
-        newData.numRows = numRows - endIndex;
-        newData.target = new int[newData.numRows];
-        newData.data = new double[newData.numRows][numCols - 1];
-
-        for (int i = 0, k = endIndex; i < numRows; i++, k++) {
-            System.out.println(k);
-            for (int j = 0; j < numCols - 1; j++) {
-                newData.data[i][j] = this.data[k][j];
-            }
-            newData.target[i] = this.target[i];
-        }
-
-        double[][] aux = new double[endIndex][numCols];
-        for (int i = 0; i < endIndex; i++) {
-            for (int j = 0; j < numCols - 1; j++) {
-                aux[i][j] = data[i][j];
-            }
-        }
-        data = aux;
-        return newData;
-    }
-
     public void columnsNames() {
         System.out.print("Colnames: ");
-        for (int i = 0; i < columns.length; i++) {
-            System.out.print(columns[i] + ", ");
+        for (String column : columns) {
+            System.out.print(column + ", ");
         }
         System.out.println("Total: " + columns.length);
     }

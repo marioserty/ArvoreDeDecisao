@@ -32,8 +32,7 @@ public class LessThan extends Binary {
         }
     }
 
-    @Override
-    public String toString() {
+    public String toString(Data d) {
         return "if( data[" + variable + "] < " + label + " ){" + "\n\t" + (super.getLeft().toString()) + "\n\t" + "\n}else{" + "\n\t" + (super.getRight().toString()) + "\n\t" + "}\n";
     }
 

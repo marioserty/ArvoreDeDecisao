@@ -5,8 +5,7 @@
  */
 package Arithmetic;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import Data.Data;
 
 /**
  *
@@ -21,15 +20,17 @@ public abstract class Binary implements ArithmeticExpression{
         try {
             return (ArithmeticExpression) super.clone();
         } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(Binary.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
         return null;
     }
 
+    @Override
     public ArithmeticExpression getLeft() {
         return left;
     }
 
+    @Override
     public ArithmeticExpression getRight() {
         return right;
     }

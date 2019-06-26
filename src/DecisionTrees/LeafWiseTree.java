@@ -20,7 +20,7 @@ import java.util.Random;
  *
  * @author mario
  */
-public class LeafWiseTree implements Runnable {
+public class LeafWiseTree extends Thread{
 
     private final int iterations;
     private final int seed;
@@ -53,10 +53,10 @@ public class LeafWiseTree implements Runnable {
                 e2 = bestExpression;
             }
             if (i % verboseEval == 0 && verbosity == 1) {
-                System.out.println("Iteration " + i + "/" + iterations + "\t train-AUC: " + AUROC(bestExpression));
+                System.out.println("Iteration " + i + "/" + iterations + " train-AUC: " + AUROC(bestExpression));
             }
         }
-        System.out.println("Best iteration: " + bestIteration + "\t AUC: " + AUROC(bestExpression));
+        System.out.println("Best iteration: " + bestIteration + " AUC: " + AUROC(bestExpression));
     }
 
     public void saveTreeCode(String fileName) throws IOException {

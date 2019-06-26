@@ -28,9 +28,8 @@ public final class Multiplication extends Binary {
         return (super.getLeft().process(d, instancia) * super.getRight().process(d, instancia));
     }
 
-    @Override
-    public String toString() {
-        return ("(" + super.getLeft().toString() + " * " + super.getRight().toString() + ")");
+    public String toString(Data d) {
+        return ("(" + super.getLeft().toString(d) + " * " + super.getRight().toString(d) + ")");
     }
 
 }

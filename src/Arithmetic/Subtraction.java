@@ -29,7 +29,7 @@ public class Subtraction extends Binary {
     }
 
     @Override
-    public String toString() {
-        return ("(" + super.getLeft().toString() + " - " + super.getRight().toString() + ")");
+    public String toString(Data d) {
+        return ("(" + super.getLeft().toString(d) + " - " + super.getRight().toString(d) + ")");
     }
 }
