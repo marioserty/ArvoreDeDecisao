@@ -18,7 +18,8 @@ import java.io.PrintWriter;
  */
 public class Data {
 
-    public static double[][] data;
+    public static double[][] train;
+    public static double[][] test;
     public static int[] target;
     public static int numRows;
     public static int numCols;
@@ -27,7 +28,7 @@ public class Data {
     public static void Read(String filePath, int nRows, int nCols, String del) throws IOException {
         numRows = nRows;
         numCols = nCols;
-        data = new double[numRows][numCols];
+        train = new double[numRows][numCols];
         target = new int[numRows];
         BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
         columns = buffer.readLine().split(del);
@@ -37,7 +38,7 @@ public class Data {
             String line = buffer.readLine();
             String[] values = line.split(del);
             for (int j = 0; j < numCols; j++) {
-                data[i][j] = Double.valueOf(values[j]);
+                train[i][j] = Double.valueOf(values[j]);
             }
             target[i] = Integer.valueOf(values[values.length - 1]);
         }
@@ -46,7 +47,7 @@ public class Data {
     public static void CustomRead(String filePath, int nRows, int nCols, String del) throws IOException {
         numRows = nRows;
         numCols = nCols;
-        data = new double[numRows][numCols];
+        train = new double[numRows][numCols];
         target = new int[numRows];
         BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
         columns = buffer.readLine().split(del);
@@ -56,13 +57,13 @@ public class Data {
             String[] values = line.split(del);
             for (int j = 0; j < numCols; j++) {
                 if (values[j].equals("True")) {
-                    data[i][j] = 1;
+                    train[i][j] = 1;
                 } else if (values[j].equals("False")) {
-                    data[i][j] = 0;
+                    train[i][j] = 0;
                 } else if ("".equals(values[j])) {
-                    data[i][j] = 0.0;
+                    train[i][j] = 0.0;
                 } else {
-                    data[i][j] = Double.valueOf(values[j]);
+                    train[i][j] = Double.valueOf(values[j]);
                 }
             }
             target[i] = Integer.valueOf(values[values.length - 1]);

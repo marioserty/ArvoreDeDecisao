@@ -10,12 +10,12 @@ import Data.Data;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import Metrics.AUC;
 import Arithmetic.ArithmeticExpression;
 import Arithmetic.Constant;
 import Arithmetic.Multiplication;
 import Arithmetic.Subtraction;
 import Arithmetic.Variable;
+import CrossValidation.KFold;
 import Metrics.Metrics;
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,11 +28,11 @@ public class RootWiseTree extends Thread {
 
     private final int iterations;
     private final int verboseEval;
-    private final Random seed;
-    private ArithmeticExpression[] forest;
     private ArrayList<Integer> trainIndexes;
     private ArrayList<Integer> valIndexes;
-    private Metrics metric;
+    private final Metrics metric;
+    private final Random seed;
+    private ArithmeticExpression bestExp;
 
     /**
      *
@@ -40,13 +40,13 @@ public class RootWiseTree extends Thread {
      * @param verboseEval
      * @param forestSize
      * @param seed
+     * @param metric
      */
     public RootWiseTree(int iterations, int verboseEval, int forestSize, int seed, Metrics metric) {
         this.iterations = iterations;
         this.verboseEval = verboseEval;
         this.seed = new Random(seed);
         this.metric = metric;
-        forest = new ArithmeticExpression[forestSize];
     }
 
     public void setValSets(ArrayList<Integer> train, ArrayList<Integer> valid) {
@@ -54,37 +54,65 @@ public class RootWiseTree extends Thread {
         valIndexes = valid;
     }
 
-    public ArithmeticExpression train() {
-        ArithmeticExpression bestExp = geraAlturaTres();
-        ArithmeticExpression currentExp = (ArithmeticExpression) bestExp.clone();
+    public void train() {
+        bestExp = geraAlturaTres();
+        ArithmeticExpression currentExp = (ArithmeticExpression) getBestExp().clone();
         for (int i = 0; i < iterations; i++) {
             currentExp = mutacao(currentExp);
-            if (EvaluateTrain(currentExp) > EvaluateTrain(bestExp)) {
+            if (EvaluateOnFoldedTrain(currentExp) < EvaluateOnFoldedTrain(getBestExp())) {
                 bestExp = currentExp;
             } else {
-                currentExp = bestExp;
+                currentExp = getBestExp();
             }
-            System.out.println("Iteration " + i + "\t"
-                    + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateTrain(bestExp)) + "\t"
-                    + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateTest(bestExp)));
+            if (i % verboseEval == 0) {
+                System.out.println("Iteration " + i + "\t"
+                        + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTrain(bestExp)) + "\t"
+                        + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTest(bestExp)));
+            }
         }
-        return bestExp;
+    }
+
+    @Override
+    public void run() {
+        bestExp = geraAlturaTres();
+        ArithmeticExpression currentExp = (ArithmeticExpression) getBestExp().clone();
+        for (int i = 0; i < iterations; i++) {
+            currentExp = mutacao(currentExp);
+            if (EvaluateOnFoldedTrain(currentExp) > EvaluateOnFoldedTrain(getBestExp())) {
+                bestExp = currentExp;
+            } else {
+                currentExp = getBestExp();
+            }
+            //            System.out.println("Iteration " + i + "\t"
+            //                    + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateTrain(bestExp)) + "\t"
+            //                    + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateTest(bestExp)));
+        }
     }
 
     public void saveExpressions(String fileName) {
-        BufferedWriter writer;
-        try {
-            for (int i = 0; i < forest.length; i++) {
-                writer = new BufferedWriter(new FileWriter("expressions/" + fileName + "_" + i + ".txt"));
-                writer.write(forest[i].toString());
-            }
-            System.out.println("Expressions saved successfully!");
-        } catch (IOException ex) {
-            System.out.println("Error while writing expression: " + ex.getMessage());
-        }
+//        BufferedWriter writer;
+//        try {
+//            for (int i = 0; i < forest.length; i++) {
+//                writer = new BufferedWriter(new FileWriter("expressions/" + fileName + "_" + i + ".txt"));
+//                writer.write(forest[i].toString());
+//            }
+//            System.out.println("Expressions saved successfully!");
+//        } catch (IOException ex) {
+//            System.out.println("Error while writing expression: " + ex.getMessage());
+//        }
     }
 
-    public double EvaluateTrain(ArithmeticExpression exp) {
+    public double Evaluate(ArithmeticExpression exp) {
+
+        double[] preds = new double[Data.numRows];
+
+        for (int i = 0; i < preds.length; i++) {
+            preds[i] = exp.process(Data.numRows);
+        }
+        return metric.measure(Data.target, preds);
+    }
+
+    public double EvaluateOnFoldedTrain(ArithmeticExpression exp) {
 
         double[] preds = new double[trainIndexes.size()];
         int[] target = new int[trainIndexes.size()];
@@ -96,7 +124,7 @@ public class RootWiseTree extends Thread {
         return metric.measure(target, preds);
     }
 
-    public double EvaluateTest(ArithmeticExpression exp) {
+    public synchronized double EvaluateOnFoldedTest(ArithmeticExpression exp) {
 
         double[] preds = new double[valIndexes.size()];
         int[] target = new int[valIndexes.size()];
@@ -200,6 +228,10 @@ public class RootWiseTree extends Thread {
             }
         }
 
+    }
+
+    public ArithmeticExpression getBestExp() {
+        return bestExp;
     }
 
 }

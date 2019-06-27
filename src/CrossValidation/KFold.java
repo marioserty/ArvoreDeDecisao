@@ -5,7 +5,12 @@
  */
 package CrossValidation;
 
+import Arithmetic.ArithmeticExpression;
 import Data.Data;
+import DecisionTrees.DecisionTree;
+import DecisionTrees.RootWiseTree;
+import Metrics.AUC;
+import Metrics.Metrics;
 import java.util.ArrayList;
 
 /**
@@ -14,9 +19,10 @@ import java.util.ArrayList;
  */
 public class KFold implements Validation {
 
-    private ArrayList[] trainIndexes;
-    private ArrayList[] validIndexes;
+    private final ArrayList[] trainIndexes;
+    private final ArrayList[] validIndexes;
     private final int nFolds;
+    private double mean = 0.0;
 
     public KFold(int k) {
         nFolds = k;

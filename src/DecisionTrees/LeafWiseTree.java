@@ -90,7 +90,7 @@ public class LeafWiseTree extends Thread{
         ArithmeticExpression right = generateDepthOne();
 
         int variable = r.nextInt(d.numCols - 1);
-        double label = d.data[r.nextInt(d.numRows - 1)][variable];
+        double label = d.train[r.nextInt(d.numRows - 1)][variable];
 
         if (r.nextDouble() < 0.5) {
             return new GreaterThan(variable, label, generateDepthOne(), generateDepthOne());
@@ -115,7 +115,7 @@ public class LeafWiseTree extends Thread{
         }
 
         int variable = r.nextInt(d.numCols - 1);
-        double label = d.data[r.nextInt(d.numRows - 1)][variable];
+        double label = d.train[r.nextInt(d.numRows - 1)][variable];
 
         if (r.nextDouble() < 0.5) {
             return new GreaterThan(variable, label, generateDepthOne(), generateDepthOne());
@@ -131,7 +131,7 @@ public class LeafWiseTree extends Thread{
          */
 
         int variable = r.nextInt(d.numCols - 1);
-        double label = d.data[r.nextInt(d.numRows - 1)][variable];
+        double label = d.train[r.nextInt(d.numRows - 1)][variable];
 
         double d = r.nextDouble();
 

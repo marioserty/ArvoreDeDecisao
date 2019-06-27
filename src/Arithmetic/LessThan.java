@@ -25,7 +25,7 @@ public class LessThan extends Binary {
 
     @Override
     public double process(int instance) {
-        if (Data.data[instance][getVariable()] < getLabel()) {
+        if (Data.train[instance][getVariable()] < getLabel()) {
             return super.left.process(instance);
         } else {
             return super.right.process(instance);
