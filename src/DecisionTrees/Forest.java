@@ -7,8 +7,10 @@ package DecisionTrees;
 
 import Arithmetic.ArithmeticExpression;
 import CrossValidation.KFold;
+import Data.Data;
 import Metrics.Metrics;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -18,35 +20,40 @@ public class Forest extends DecisionTree {
 
     private final ArrayList<Double> foldsResults;
     private final ArrayList<Double> forestResults;
+    private final ArrayList<RootWiseTree[]> forest;
     private final int forestSize;
+    private double[] predictions;
+    private int nFolds;
 
     public Forest(int forestSize) {
+        this.forestSize = forestSize;
         foldsResults = new ArrayList<>();
         forestResults = new ArrayList<>();
-        this.forestSize = forestSize;
+        forest = new ArrayList<>();
     }
 
     public void crossValidate(int iterations, int verboseEval, int forestSize, int seed, Metrics metric, int nFolds) throws InterruptedException {
-
+        this.nFolds = nFolds;
         RootWiseTree[] foldsForest = new RootWiseTree[nFolds];
         KFold kfold = new KFold(nFolds);
         kfold.split();
-
-        for (int i = 0; i < nFolds; i++) {
-            foldsForest[i] = new RootWiseTree(iterations, verboseEval, seed, metric);
-            foldsForest[i].setValSets(kfold.getTrainIndexes()[i], kfold.getValidIndexes()[i]);
-        }
+        Random r = new Random(seed);
 
         System.out.println("iteration \t");
         for (int i = 0; i < forestSize; i++) {
+            int newSeed = r.nextInt() + seed;
             for (int j = 0; j < nFolds; j++) {
+//                foldsForest[j] = new RootWiseTree(iterations, verboseEval, seed, metric);
+                foldsForest[j] = new RootWiseTree(iterations, verboseEval, newSeed, metric);
+                foldsForest[j].setValSets(kfold.getTrainIndexes()[j], kfold.getValidIndexes()[j]);
                 foldsForest[j].start();
             }
             for (int j = 0; j < nFolds; j++) {
                 foldsForest[j].join();
                 foldsResults.add(foldsForest[j].getResult());
-                foldsForest[j].setSeed(foldsForest[j].getSeed() + 1);
+//                foldsForest[j].setSeed(foldsForest[j].getSeed() + 1);
             }
+            forest.add(foldsForest);
             System.out.println(i + "\t" + "valid" + metric.getName() + String.format("%.05f", getFoldsMean()));
             forestResults.add(getFoldsMean());
         }
@@ -67,6 +74,23 @@ public class Forest extends DecisionTree {
             mean += d;
         }
         return mean / forestResults.size();
+    }
+
+    public double[] predict() {
+        predictions = new double[Data.test.length];
+        
+        for (int i = 0; i < forestSize; i++) {
+            for (int j = 0; j < nFolds; j++) {
+                for (int k = 0; k < predictions.length; k++) {
+//                    System.out.println(forest.get(i)[j].getBestExp().processOnTest(k));
+                    predictions[k] += 1.0/(1.0 + Math.exp(-forest.get(i)[j].getBestExp().processOnTest(k)));
+                }
+            }
+        }
+        for (int i = 0; i < predictions.length; i++) {
+            predictions[i] = predictions[i] / (nFolds * forestSize);
+        }
+        return predictions;
     }
 
 }

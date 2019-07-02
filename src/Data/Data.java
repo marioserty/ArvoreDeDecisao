@@ -6,7 +6,9 @@
 package Data;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class Data {
     public static int numCols;
     public static String[] columns;
 
-    public static void Read(String filePath, int nRows, int nCols, String del) throws IOException {
+    public static void ReadTrain(String filePath, int nRows, int nCols, String del) throws IOException {
         numRows = nRows;
         numCols = nCols;
         train = new double[numRows][numCols];
@@ -42,6 +44,49 @@ public class Data {
             }
             target[i] = Integer.valueOf(values[values.length - 1]);
         }
+    }
+
+    public static void ReadTest(String filePath, int nRows, int nCols, String del) throws IOException {;
+        BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
+        buffer.readLine();
+        test = new double[nRows][nCols];
+
+        for (int i = 0; i < nRows; i++) {
+            String line = buffer.readLine();
+            String[] values = line.split(del);
+            for (int j = 0; j < nCols; j++) {
+                test[i][j] = Double.valueOf(values[j]);
+            }
+        }
+    }
+
+    public static void WritePredictions(String filePath, String exampleFilePath, double[] preds) throws FileNotFoundException, IOException {
+        BufferedReader buffer = new BufferedReader(new FileReader(new File(exampleFilePath)));
+        String[] subCols = buffer.readLine().split(",");
+        String ids[] = new String[preds.length];
+
+        for (int i = 0; buffer.ready(); i++) {
+            String line = buffer.readLine();
+            String[] values = line.split(",");
+            ids[i] = values[0];
+        }
+
+        BufferedWriter writer;
+        writer = new BufferedWriter(new FileWriter(filePath));
+        PrintWriter pr = new PrintWriter(writer);
+        pr.println(subCols[0] + "," + subCols[1]);
+        for (int i = 0; i < preds.length; i++) {
+            int pred;
+            if(preds[i] > .5){
+                pred = 1;
+            }else{
+                pred = 0;
+            }
+            pr.println(ids[i] + "," + pred);
+        }
+        pr.close();
+        writer.close();
+        
     }
 
     public static void CustomRead(String filePath, int nRows, int nCols, String del) throws IOException {

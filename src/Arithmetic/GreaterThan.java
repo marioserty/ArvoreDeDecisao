@@ -24,11 +24,20 @@ public class GreaterThan extends Binary {
     }
 
     @Override
-    public double process(int instance) {
+    public double processOnTrain(int instance) {
         if (Data.train[instance][getVariavel()] > getLabel()) {
-            return super.left.process(instance);
+            return super.left.processOnTrain(instance);
         } else {
-            return super.right.process(instance);
+            return super.right.processOnTrain(instance);
+        }
+    }
+    
+    @Override
+    public double processOnTest(int instance) {
+        if (Data.train[instance][getVariavel()] > getLabel()) {
+            return super.left.processOnTest(instance);
+        } else {
+            return super.right.processOnTest(instance);
         }
     }
 

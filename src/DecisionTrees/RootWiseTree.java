@@ -88,6 +88,14 @@ public class RootWiseTree extends DecisionTree {
         result = EvaluateOnFoldedTest(bestExp);
     }
 
+    public double[] predict() {
+        double[] preds = new double[Data.test.length];
+        for (int i = 0; i < preds.length; i++) {
+            preds[i] = bestExp.processOnTest(i);
+        }
+        return preds;
+    }
+
     public void saveExpressions(String fileName) {
 //        BufferedWriter writer;
 //        try {
@@ -101,23 +109,22 @@ public class RootWiseTree extends DecisionTree {
 //        }
     }
 
-    public double Evaluate(ArithmeticExpression exp) {
-
-        double[] preds = new double[Data.numRows];
-
-        for (int i = 0; i < preds.length; i++) {
-            preds[i] = exp.process(Data.numRows);
-        }
-        return metric.measure(Data.target, preds);
-    }
-
+//    public double Evaluate(ArithmeticExpression exp) {
+//
+//        double[] preds = new double[Data.numRows];
+//
+//        for (int i = 0; i < preds.length; i++) {
+//            preds[i] = exp.process(Data.numRows);
+//        }
+//        return metric.measure(Data.target, preds);
+//    }
     public double EvaluateOnFoldedTrain(ArithmeticExpression exp) {
 
         double[] preds = new double[trainIndexes.size()];
         int[] target = new int[trainIndexes.size()];
 
         for (int i = 0; i < preds.length; i++) {
-            preds[i] = exp.process(trainIndexes.get(i));
+            preds[i] = 1.0 / (1.0 + Math.exp(-exp.processOnTrain(trainIndexes.get(i))));
             target[i] = Data.target[trainIndexes.get(i)];
         }
         return metric.measure(target, preds);
@@ -128,8 +135,8 @@ public class RootWiseTree extends DecisionTree {
         int[] target = new int[valIndexes.size()];
 
         for (int i = 0; i < preds.length; i++) {
+            preds[i] = 1.0 / (1.0 + Math.exp(-exp.processOnTrain(valIndexes.get(i))));
             target[i] = Data.target[valIndexes.get(i)];
-            preds[i] = exp.process(valIndexes.get(i));
         }
         return metric.measure(target, preds);
     }
@@ -187,42 +194,43 @@ public class RootWiseTree extends DecisionTree {
          */
 
         double d = r.nextDouble();
+        int i = r.nextInt(3);
 
-        if (d < 1.0 / 4.0) {
-            double d2 = r.nextDouble();
-            if (d2 < 1.0 / 3.0) {
-                return new Addition(mutacao(geraAlturaTres()), exp.getLeft());
-            } else if (d2 < 2.0 / 3.0) {
-                return new Subtraction(mutacao(geraAlturaTres()), exp.getLeft());
-            } else {
-                return new Multiplication(mutacao(geraAlturaTres()), exp.getLeft());
+        if (d < 0.15) {
+            switch (i) {
+                case 0:
+                    return new Addition(exp.getLeft(), mutacao(geraAlturaDois()));
+                case 1:
+                    return new Subtraction(exp.getLeft(), mutacao(geraAlturaDois()));
+                default:
+                    return new Multiplication(exp.getLeft(), mutacao(geraAlturaDois()));
             }
-        } else if (d < 2.0 / 4.0) {
-            double d2 = r.nextDouble();
-            if (d2 < 1.0 / 3.0) {
-                return new Addition(exp.getRight(), mutacao(geraAlturaTres()));
-            } else if (d2 < 2.0 / 3.0) {
-                return new Subtraction(exp.getRight(), mutacao(geraAlturaTres()));
-            } else {
-                return new Multiplication(exp.getRight(), mutacao(geraAlturaTres()));
+        } else if (d < 0.25) {
+            switch (i) {
+                case 0:
+                    return new Addition(mutacao(geraAlturaDois()), exp.getRight());
+                case 1:
+                    return new Subtraction(mutacao(geraAlturaDois()), exp.getRight());
+                default:
+                    return new Multiplication(mutacao(geraAlturaDois()), exp.getRight());
             }
-        } else if (d < 3.0 / 4.0) {
-            double d2 = r.nextDouble();
-            if (d2 < 1.0 / 3.0) {
-                return new Addition(exp.getLeft(), geraAlturaDois());
-            } else if (d2 < 2.0 / 3.0) {
-                return new Subtraction(exp.getLeft(), geraAlturaDois());
-            } else {
-                return new Multiplication(exp.getLeft(), geraAlturaDois());
+        } else if (d < 0.5) {
+            switch (i) {
+                case 0:
+                    return new Addition(exp.getLeft(), (geraAlturaDois()));
+                case 1:
+                    return new Subtraction(exp.getLeft(), (geraAlturaDois()));
+                default:
+                    return new Multiplication(exp.getLeft(), (geraAlturaDois()));
             }
         } else {
-            double d2 = r.nextDouble();
-            if (d2 < 1.0 / 3.0) {
-                return new Addition(geraAlturaDois(), exp.getRight());
-            } else if (d2 < 2.0 / 3.0) {
-                return new Subtraction(geraAlturaDois(), exp.getRight());
-            } else {
-                return new Multiplication(geraAlturaDois(), exp.getRight());
+            switch (i) {
+                case 0:
+                    return new Addition((geraAlturaDois()), exp.getRight());
+                case 1:
+                    return new Subtraction((geraAlturaDois()), exp.getRight());
+                default:
+                    return new Multiplication((geraAlturaDois()), exp.getRight());
             }
         }
 

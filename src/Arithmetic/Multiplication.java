@@ -24,8 +24,13 @@ public final class Multiplication extends Binary {
     }
 
     @Override
-    public double process(int instancia) { 
-        return (super.getLeft().process(instancia) * super.getRight().process(instancia));
+    public double processOnTrain(int instancia) {
+        return (super.getLeft().processOnTrain(instancia) * super.getRight().processOnTrain(instancia));
+    }
+
+    @Override
+    public double processOnTest(int instancia) {
+        return (super.getLeft().processOnTest(instancia) * super.getRight().processOnTest(instancia));
     }
 
     @Override

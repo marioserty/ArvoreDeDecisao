@@ -25,8 +25,13 @@ public class Variable extends Unary {
     }
 
     @Override
-    public double process(int instancia) {
+    public double processOnTrain(int instancia) {
         return Data.train[instancia][this.column];
+    }
+
+    @Override
+    public double processOnTest(int instancia) {
+        return Data.test[instancia][this.column];
     }
 
     @Override

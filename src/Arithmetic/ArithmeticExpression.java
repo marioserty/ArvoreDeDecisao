@@ -13,7 +13,9 @@ import Data.Data;
  */
 public interface ArithmeticExpression extends Cloneable{
     
-    public double process(int instance);
+    public double processOnTrain(int instance);
+    
+    public double processOnTest(int instance);
     
     @Override
     public String toString();
