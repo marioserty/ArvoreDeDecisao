@@ -100,6 +100,6 @@ public class AUC implements Metrics{
 
     @Override
     public String getName() {
-        return "AUC";
+        return " AUC ";
     }
 }

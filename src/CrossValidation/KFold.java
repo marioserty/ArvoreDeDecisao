@@ -22,7 +22,7 @@ public class KFold implements Validation {
     private final ArrayList[] trainIndexes;
     private final ArrayList[] validIndexes;
     private final int nFolds;
-    private double mean = 0.0;
+    private final double mean = 0.0;
 
     public KFold(int k) {
         nFolds = k;

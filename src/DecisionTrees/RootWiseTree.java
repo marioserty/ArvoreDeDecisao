@@ -7,46 +7,46 @@ package DecisionTrees;
 
 import Arithmetic.Addition;
 import Data.Data;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import Arithmetic.ArithmeticExpression;
 import Arithmetic.Constant;
 import Arithmetic.Multiplication;
 import Arithmetic.Subtraction;
 import Arithmetic.Variable;
-import CrossValidation.KFold;
 import Metrics.Metrics;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author mario
  */
-public class RootWiseTree extends Thread {
+public class RootWiseTree extends DecisionTree {
 
+    private Random r;
+    private int seed;
+    private final Metrics metric;
     private final int iterations;
     private final int verboseEval;
     private ArrayList<Integer> trainIndexes;
     private ArrayList<Integer> valIndexes;
-    private final Metrics metric;
-    private final Random seed;
     private ArithmeticExpression bestExp;
+    private double result;
 
     /**
      *
      * @param iterations
      * @param verboseEval
-     * @param forestSize
      * @param seed
      * @param metric
      */
-    public RootWiseTree(int iterations, int verboseEval, int forestSize, int seed, Metrics metric) {
+    public RootWiseTree(int iterations, int verboseEval, int seed, Metrics metric) {
         this.iterations = iterations;
         this.verboseEval = verboseEval;
-        this.seed = new Random(seed);
         this.metric = metric;
+        this.seed = seed;
+        this.r = new Random(this.seed);
     }
 
     public void setValSets(ArrayList<Integer> train, ArrayList<Integer> valid) {
@@ -59,7 +59,7 @@ public class RootWiseTree extends Thread {
         ArithmeticExpression currentExp = (ArithmeticExpression) getBestExp().clone();
         for (int i = 0; i < iterations; i++) {
             currentExp = mutacao(currentExp);
-            if (EvaluateOnFoldedTrain(currentExp) < EvaluateOnFoldedTrain(getBestExp())) {
+            if (EvaluateOnFoldedTrain(currentExp) > EvaluateOnFoldedTrain(getBestExp())) {
                 bestExp = currentExp;
             } else {
                 currentExp = getBestExp();
@@ -70,6 +70,7 @@ public class RootWiseTree extends Thread {
                         + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTest(bestExp)));
             }
         }
+        result = EvaluateOnFoldedTest(bestExp);
     }
 
     @Override
@@ -83,10 +84,8 @@ public class RootWiseTree extends Thread {
             } else {
                 currentExp = getBestExp();
             }
-            //            System.out.println("Iteration " + i + "\t"
-            //                    + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateTrain(bestExp)) + "\t"
-            //                    + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateTest(bestExp)));
         }
+        result = EvaluateOnFoldedTest(bestExp);
     }
 
     public void saveExpressions(String fileName) {
@@ -124,23 +123,22 @@ public class RootWiseTree extends Thread {
         return metric.measure(target, preds);
     }
 
-    public synchronized double EvaluateOnFoldedTest(ArithmeticExpression exp) {
-
+    public double EvaluateOnFoldedTest(ArithmeticExpression exp) {
         double[] preds = new double[valIndexes.size()];
         int[] target = new int[valIndexes.size()];
 
         for (int i = 0; i < preds.length; i++) {
-            preds[i] = exp.process(valIndexes.get(i));
             target[i] = Data.target[valIndexes.get(i)];
+            preds[i] = exp.process(valIndexes.get(i));
         }
         return metric.measure(target, preds);
     }
 
     private ArithmeticExpression geraAlturaUm() {
-        if (seed.nextDouble() < 0.5) {
-            return new Constant(seed.nextDouble());
+        if (r.nextDouble() < 0.5) {
+            return new Constant(r.nextDouble());
         } else {
-            return new Variable((int) (seed.nextDouble() * Data.numCols - 1));
+            return new Variable((int) (r.nextDouble() * Data.numCols - 1));
         }
     }
 
@@ -148,9 +146,9 @@ public class RootWiseTree extends Thread {
         ArithmeticExpression direita = geraAlturaUm();
         ArithmeticExpression esquerda = geraAlturaUm();
 
-        if (seed.nextDouble() < 1.0 / 3.0) {
+        if (r.nextDouble() < 1.0 / 3.0) {
             return new Addition(esquerda, direita);
-        } else if (seed.nextDouble() < 2.0 / 3.0) {
+        } else if (r.nextDouble() < 2.0 / 3.0) {
             return new Subtraction(esquerda, direita);
         } else {
             return new Multiplication(esquerda, direita);
@@ -162,10 +160,10 @@ public class RootWiseTree extends Thread {
         ArithmeticExpression direita;
         ArithmeticExpression esquerda;
 
-        if (seed.nextDouble() < 1.0 / 3.0) {
+        if (r.nextDouble() < 1.0 / 3.0) {
             direita = geraAlturaDois();
             esquerda = geraAlturaUm();
-        } else if (seed.nextDouble() < 2.0 / 3.0) {
+        } else if (r.nextDouble() < 2.0 / 3.0) {
             direita = geraAlturaUm();
             esquerda = geraAlturaDois();
         } else {
@@ -173,9 +171,9 @@ public class RootWiseTree extends Thread {
             esquerda = geraAlturaDois();
         }
 
-        if (seed.nextDouble() < 1.0 / 3.0) {
+        if (r.nextDouble() < 1.0 / 3.0) {
             return new Addition(esquerda, direita);
-        } else if (seed.nextDouble() < 2.0 / 3.0) {
+        } else if (r.nextDouble() < 2.0 / 3.0) {
             return new Subtraction(esquerda, direita);
         } else {
             return new Multiplication(esquerda, direita);
@@ -188,28 +186,28 @@ public class RootWiseTree extends Thread {
          * trocar meio;
          */
 
-        double d = seed.nextDouble();
+        double d = r.nextDouble();
 
         if (d < 1.0 / 4.0) {
-            double d2 = seed.nextDouble();
+            double d2 = r.nextDouble();
             if (d2 < 1.0 / 3.0) {
-                return new Addition(mutacao(geraAlturaTres()), exp);
+                return new Addition(mutacao(geraAlturaTres()), exp.getLeft());
             } else if (d2 < 2.0 / 3.0) {
-                return new Subtraction(mutacao(geraAlturaTres()), exp);
+                return new Subtraction(mutacao(geraAlturaTres()), exp.getLeft());
             } else {
-                return new Multiplication(mutacao(geraAlturaTres()), exp);
+                return new Multiplication(mutacao(geraAlturaTres()), exp.getLeft());
             }
         } else if (d < 2.0 / 4.0) {
-            double d2 = seed.nextDouble();
+            double d2 = r.nextDouble();
             if (d2 < 1.0 / 3.0) {
-                return new Addition(exp, mutacao(geraAlturaTres()));
+                return new Addition(exp.getRight(), mutacao(geraAlturaTres()));
             } else if (d2 < 2.0 / 3.0) {
-                return new Subtraction(exp, mutacao(geraAlturaTres()));
+                return new Subtraction(exp.getRight(), mutacao(geraAlturaTres()));
             } else {
-                return new Multiplication(exp, mutacao(geraAlturaTres()));
+                return new Multiplication(exp.getRight(), mutacao(geraAlturaTres()));
             }
         } else if (d < 3.0 / 4.0) {
-            double d2 = seed.nextDouble();
+            double d2 = r.nextDouble();
             if (d2 < 1.0 / 3.0) {
                 return new Addition(exp.getLeft(), geraAlturaDois());
             } else if (d2 < 2.0 / 3.0) {
@@ -218,7 +216,7 @@ public class RootWiseTree extends Thread {
                 return new Multiplication(exp.getLeft(), geraAlturaDois());
             }
         } else {
-            double d2 = seed.nextDouble();
+            double d2 = r.nextDouble();
             if (d2 < 1.0 / 3.0) {
                 return new Addition(geraAlturaDois(), exp.getRight());
             } else if (d2 < 2.0 / 3.0) {
@@ -230,8 +228,25 @@ public class RootWiseTree extends Thread {
 
     }
 
+    public double getResult() throws InterruptedException {
+        return result;
+    }
+
     public ArithmeticExpression getBestExp() {
         return bestExp;
+    }
+
+    public void setSeed(int newSeed) {
+        this.seed = newSeed;
+        r.setSeed(seed);
+    }
+
+    public int getSeed() {
+        return seed;
+    }
+
+    public String getMetric() {
+        return metric.getName();
     }
 
 }
