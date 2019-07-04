@@ -29,7 +29,7 @@ public class RegressionTree extends DecisionTree {
     private int seed;
     private final int iterations;
     private final int verboseEval;
-    private final double featureFrac;
+    private double featureFrac;
     private final Metrics metric;
 
     private final Random r;
