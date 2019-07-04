@@ -26,14 +26,23 @@ public class Data {
     public static int numRows;
     public static int numCols;
     public static String[] columns;
+    public static String targetCol;
 
     public static void ReadTrain(String filePath, int nRows, int nCols, String del) throws IOException {
+        
+        System.out.println("Reading train data...");
+        
         numRows = nRows;
         numCols = nCols - 1;
         train = new double[numRows][numCols];
         target = new int[numRows];
+        columns = new String[numCols];
+        
         BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
-        columns = buffer.readLine().split(del);
+        String[] dataCols = buffer.readLine().split(del);
+        System.arraycopy(dataCols, 0, columns, 0, columns.length);
+        targetCol = dataCols[dataCols.length - 1];
+        
 
         for (int i = 0; i < numRows; i++) {
 
@@ -46,7 +55,10 @@ public class Data {
         }
     }
 
-    public static void ReadTest(String filePath, int nRows, int nCols, String del) throws IOException {;
+    public static void ReadTest(String filePath, int nRows, int nCols, String del) throws IOException {
+        
+        System.out.println("Reading test data...");
+        
         BufferedReader buffer = new BufferedReader(new FileReader(new File(filePath)));
         buffer.readLine();
         test = new double[nRows][nCols];
@@ -61,6 +73,9 @@ public class Data {
     }
 
     public static void WritePredictions(String filePath, String exampleFilePath, double[] preds) throws FileNotFoundException, IOException {
+        
+        System.out.println("Writing predictions...");
+        
         BufferedReader buffer = new BufferedReader(new FileReader(new File(exampleFilePath)));
         String[] subCols = buffer.readLine().split(",");
         String ids[] = new String[preds.length];

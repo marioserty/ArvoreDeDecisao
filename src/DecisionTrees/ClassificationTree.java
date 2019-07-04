@@ -7,8 +7,8 @@ package DecisionTrees;
 
 import Arithmetic.ArithmeticExpression;
 import Arithmetic.Constant;
-import Arithmetic.GreaterThan;
-import Arithmetic.LessThan;
+import Inequality.GreaterThan;
+import Inequality.LessThan;
 import Metrics.AUC;
 import Data.Data;
 import java.io.BufferedWriter;

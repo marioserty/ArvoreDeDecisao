@@ -12,8 +12,8 @@ import Data.Data;
  * @author Mário
  */
 public abstract class Binary implements ArithmeticExpression{
-    ArithmeticExpression left;
-    ArithmeticExpression right;
+    protected ArithmeticExpression left;
+    protected ArithmeticExpression right;
     
     @Override
     public Object clone(){

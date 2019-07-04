@@ -3,20 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Arithmetic;
+package Trigonometric;
 
+import Arithmetic.ArithmeticExpression;
+import Arithmetic.Unary;
+import Arithmetic.Variable;
 import Data.Data;
 
 /**
  *
- * @author Mário
+ * @author mario
  */
-public class Variable extends Unary {
+public class Tan extends Unary {
+    
+    ArithmeticExpression exp;
 
-    private int column;
-
-    public Variable(int id) {
-        this.column = id;
+    public Tan(ArithmeticExpression exp) {
+        this.exp = exp;
     }
 
     @Override
@@ -25,22 +28,23 @@ public class Variable extends Unary {
     }
 
     @Override
-    public double processOnTrain(int instancia) {
-        return Data.train[instancia][this.getColumn()];
+    public double processOnTrain(int instance) {
+        return Math.tan(exp.processOnTrain(instance));
     }
 
     @Override
-    public double processOnTest(int instancia) {
-        return Data.test[instancia][this.getColumn()];
+    public double processOnTest(int instance) {
+        return Math.tan(exp.processOnTest(instance));
     }
 
     @Override
     public String toString() {
-        return "data[\'" + Data.columns[this.getColumn()] + "\']";
-    }
-
-    public void setColumn(int newId) {
-        this.column = newId;
+        if(exp instanceof Variable){
+            Variable var = (Variable) exp;
+            return "tan(data[\'" + Data.columns[var.getColumn()] + "\'])";
+        }else{
+            return "tan(" + exp.toString() + ")";
+        }
     }
 
     @Override
@@ -51,10 +55,6 @@ public class Variable extends Unary {
     @Override
     public ArithmeticExpression getLeft() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public int getColumn() {
-        return column;
     }
 
 }

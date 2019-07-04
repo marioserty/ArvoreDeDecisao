@@ -3,20 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Arithmetic;
+package Trigonometric;
 
+import Arithmetic.ArithmeticExpression;
+import Arithmetic.Unary;
+import Arithmetic.Variable;
 import Data.Data;
 
 /**
  *
  * @author mario
  */
-public class SquareRoot extends Binary {
+public class Arctan extends Unary {
     
-    int column;
+    ArithmeticExpression exp;
 
-    public SquareRoot(int id) {
-        this.column = id;
+    public Arctan(ArithmeticExpression exp) {
+        this.exp = exp;
     }
 
     @Override
@@ -26,17 +29,22 @@ public class SquareRoot extends Binary {
 
     @Override
     public double processOnTrain(int instance) {
-        return Math.sqrt(Data.train[instance][this.column]);
+        return Math.atan(exp.processOnTrain(instance));
     }
 
     @Override
     public double processOnTest(int instance) {
-        return Math.sqrt(Data.test[instance][this.column]);
+        return Math.atan(exp.processOnTest(instance));
     }
 
     @Override
     public String toString() {
-        return ("sqrt(data[\'" + Data.columns[this.column] + "\'])");
+        if(exp instanceof Variable){
+            Variable var = (Variable) exp;
+            return "atan(data[\'" + Data.columns[var.getColumn()] + "\'])";
+        }else{
+            return "atan(" + exp.toString() + ")";
+        }
     }
 
     @Override
