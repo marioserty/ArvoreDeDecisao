@@ -24,11 +24,20 @@ public class LessThan extends Binary {
     }
 
     @Override
-    public double process(Data d, int instance) {
-        if (d.data[instance][getVariable()] < getLabel()) {
-            return super.left.process(d, instance);
+    public double processOnTrain(int instance) {
+        if (Data.train[instance][getVariable()] < getLabel()) {
+            return super.left.processOnTrain(instance);
         } else {
-            return super.right.process(d, instance);
+            return super.right.processOnTrain(instance);
+        }
+    }
+
+    @Override
+    public double processOnTest(int instance) {
+        if (Data.train[instance][getVariable()] < getLabel()) {
+            return super.left.processOnTest(instance);
+        } else {
+            return super.right.processOnTest(instance);
         }
     }
 

@@ -6,13 +6,12 @@
 package Main;
 
 import CrossValidation.KFold;
-import DecisionTrees.RootWiseTree;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import Data.Data;
-import DecisionTrees.LeafWiseTree;
-import Metrics.AUC;
-import java.util.ArrayList;
+import DecisionTrees.Forest;
+import DecisionTrees.RegressionTree;
+import Metrics.*;
 
 /**
  *
@@ -21,67 +20,55 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
-
+        
         //Dataset reading
-        Data train = new Data();
-//        train.Read("datasets/kyphosis_reshape.csv", 81, 4, ",", true);
-//        train.CustomRead("datasets/readmission_data_for_modeling.csv", 25000, 83, ",", true);
-        train.Read("datasets/arquivoX2.csv", 199981, 10, ",", true);
-//        test = train.splitTrainTest(0.7);
-        System.out.println("Data info:");
-        System.out.println("Data shape: (" + train.numRows + "," + train.numCols + ")");
-        train.columnsNames();
+//        Data.CustomRead("../datasets/readmission_data_for_modeling.csv", 25000, 83, ",");
+
+//        Data.ReadTrain("datasets/breast_cancer_reshaped.csv", 569, 31, ",");
+
+        Data.ReadTrain("../datasets/titanic/reshaped_train.csv", 891, 9, ",");
+        Data.ReadTest("../datasets/titanic/reshaped_test.csv", 418, 8, ",");
+
+//        Data.ReadTrain("datasets/santander/train.csv", 200000, 200, ",");
+//        Data.ReadTest("datasets/santander/test.csv", 200000, 199, ",");
+
+//        Data.ReadTrain("../datasets/santander-customer-satisfaction/train.csv", 76020, 371, ",");
+//        Data.ReadTest("../datasets/santander-customer-satisfaction/test.csv", 75818, 370, ",");
 
         // Tree parameters
-        int seed = 1980;
-        int iterations = 100;
-        int verbosity = 1;
-        int verboseEval = 1;
-        int nfolds = 5;
+        int seed = 2028;
+        int iterations = 800;
+        int forestSize = 500;
+        int nFolds = 5;
+        double featureFrac = .2;
+        int verbose = 1;
+        Metrics metric = new Accuracy();
 
-        double[] preds;
-        double meanAUC = 0.0;
+        // Parallel training code
+        Forest f = new Forest(forestSize);
+        f.crossValidate(iterations, verbose, forestSize, seed, metric, nFolds, featureFrac);
+        double[] preds = f.predict();
+        Data.WritePredictions("../datasets/titanic/sub.csv", "../datasets/titanic/gender_submission.csv", f.preds);
+//        Data.WritePredictions("../datasets/santander-customer-satisfaction/sub.csv", "../datasets/santander-customer-satisfaction/sample_submission.csv", f.preds);
+        
+        System.out.println("Finished!");
+        System.out.println("Parameters used: ");
+        
 
-        KFold kfold = new KFold(train, nfolds);
-        kfold.split();
-        RootWiseTree rwt;
-        LeafWiseTree lwt;
-        int k = 1;
-        //Sequential training
-        System.out.println("Running kfold...");
-        while (kfold.nextFold()) {
-
-            rwt = new RootWiseTree(kfold.getTrain(), iterations, verboseEval, verbosity, seed);
-            rwt.run();
-            preds = rwt.predict(kfold.getTest());
-
-            meanAUC += AUC.measure(kfold.getTest().target, preds);
-            System.out.println("Fold " + k + " AUC: " + AUC.measure(kfold.getTest().target, preds));
-            rwt.saveTreeEquation("tree_fold_" + k + ".txt");
-            k++;
-        }
-        System.out.println("Mean AUC: " + meanAUC / nfolds);
-
-//        meanAUC = 0.0;
-//        // Training using threads
-//        ArrayList<RootWiseTree> trees = new ArrayList<>();
-//        for (int i = 0; i < nfolds; i++) {
-//            kfold.nextFold();
-//            trees.add(new RootWiseTree(kfold.getTrain(), iterations, verboseEval, verbosity, seed));
-//            trees.get(i).start();
-//        }
-//        kfold = new KFold(train, nfolds);
+        // Sequential training code
+//        KFold kfold = new KFold(nFolds);
 //        kfold.split();
-//        for (int i = 0; i < nfolds; i++) {            
-//            trees.get(i).join();
-//            kfold.nextFold();
-//            preds = trees.get(i).predict(kfold.getTest());
-//            meanAUC += AUC.measure(kfold.getTest().target, preds);
-//            System.out.println("Fold " + (i + 1) + " AUC: " + AUC.measure(kfold.getTest().target, preds));
+//        double mean = 0.0;
+//
+//        RegressionTree rwt;
+//        for (int i = 0; i < nFolds; i++) {
+//            rwt = new RegressionTree(iterations, verbose, seed, metric, featureFrac);
+//            rwt.setValSets(kfold.getTrainIndexes()[i], kfold.getValidIndexes()[i]);
+//            rwt.train();
+//            mean += rwt.getResult();
+//            System.out.println("Fold " + (i + 1) + " " + metric.getName() + " " + rwt.getResult());
 //        }
-//        for (int i = 0; i < nfolds; i++) {
-//        }
-//        System.out.println("Mean AUC: " + meanAUC/nfolds);
+//        System.out.println("Full : " + mean / nFolds);
     }
 
 }

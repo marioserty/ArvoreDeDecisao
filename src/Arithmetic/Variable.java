@@ -25,13 +25,18 @@ public class Variable extends Unary {
     }
 
     @Override
-    public double process(Data d, int instancia) {
-        return d.data[instancia][this.column];
+    public double processOnTrain(int instancia) {
+        return Data.train[instancia][this.column];
     }
 
     @Override
-    public String toString(Data d) {
-        return "data[\'" + d.columns[this.column] + "\']";
+    public double processOnTest(int instancia) {
+        return Data.test[instancia][this.column];
+    }
+
+    @Override
+    public String toString() {
+        return "data[\'" + Data.columns[this.column] + "\']";
     }
 
     public void setColumn(int newId) {

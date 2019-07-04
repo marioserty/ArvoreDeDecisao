@@ -25,7 +25,12 @@ public final class Constant extends Unary{
     }
 
     @Override
-    public double process(Data d, int instancia) {
+    public double processOnTrain(int instancia) {
+        return this.value;
+    }
+    
+    @Override
+    public double processOnTest(int instancia) {
         return this.value;
     }
 

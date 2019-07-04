@@ -5,6 +5,7 @@
  */
 package Arithmetic;
 
+import Data.Data;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,11 +13,12 @@ import java.util.logging.Logger;
  *
  * @author Mário
  */
-public abstract class Unary implements ArithmeticExpression{
+public abstract class Unary implements ArithmeticExpression {
+
     ArithmeticExpression exp;
-    
+
     @Override
-    public Object clone(){
+    public Object clone() {
         try {
             return (ArithmeticExpression) super.clone();
         } catch (CloneNotSupportedException ex) {
@@ -27,5 +29,15 @@ public abstract class Unary implements ArithmeticExpression{
 
     public ArithmeticExpression getExp() {
         return exp;
+    }
+
+    @Override
+    public double processOnTrain(int instance) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double processOnTest(int instance) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -13,11 +13,44 @@ import java.util.ArrayList;
  * @author mario
  */
 public class KFold implements Validation {
-    
-    private ArrayList[] trainIndexes;
-    
-    public KFold(int k){
-        trainIndexes = new ArrayList[k];
+
+    private final ArrayList[] trainIndexes;
+    private final ArrayList[] validIndexes;
+    private final int nFolds;
+    private final double mean = 0.0;
+
+    public KFold(int k) {
+        nFolds = k;
+        trainIndexes = new ArrayList[nFolds];
+        validIndexes = new ArrayList[nFolds];
+        for (int i = 0; i < nFolds; i++) {
+            trainIndexes[i] = new ArrayList();
+            validIndexes[i] = new ArrayList();
+        }
     }
-    
+
+    public void split() {
+        for (int i = 0; i < Data.numRows; i++) {
+            validIndexes[i % nFolds].add(i);
+        }
+        for (int i = 0; i < nFolds; i++) {
+            for (int j = 0; j < Data.numRows; j++) {
+                if(!validIndexes[i].contains(j))
+                    trainIndexes[i].add(j);
+            }
+        }
+    }
+
+    public ArrayList[] getTrainIndexes() {
+        return trainIndexes;
+    }
+
+    public ArrayList[] getValidIndexes() {
+        return validIndexes;
+    }
+
+    public int getnFolds() {
+        return nFolds;
+    }
+
 }

@@ -38,7 +38,7 @@ import Sort.QuickSort;
  *
  * @author Haifeng Li
  */
-public class AUC {
+public class AUC implements Metrics{
 
     public AUC() {
     }
@@ -49,7 +49,8 @@ public class AUC {
      * @param probability The posterior probability of positive class.
      * @return AUC
      */
-    public static double measure(int[] truth, double[] probability) {
+    @Override
+    public double measure(int[] truth, double[] probability) {
         if (truth.length != probability.length) {
             throw new IllegalArgumentException(String.format("The vector sizes don't match: %d != %d.", truth.length, probability.length));
         }
@@ -95,5 +96,10 @@ public class AUC {
 
         auc = (auc - (pos * (pos+1) / 2.0)) / (pos * neg);
         return auc;
+    }
+
+    @Override
+    public String getName() {
+        return "AUC";
     }
 }
