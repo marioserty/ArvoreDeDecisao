@@ -26,6 +26,11 @@ public abstract class Unary implements ArithmeticExpression {
         }
         return null;
     }
+    
+    @Override
+    public int height(){
+        return 1;
+    }
 
     public ArithmeticExpression getExp() {
         return exp;

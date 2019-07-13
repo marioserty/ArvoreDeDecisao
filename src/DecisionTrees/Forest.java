@@ -20,76 +20,55 @@ import java.util.Set;
  */
 public class Forest extends DecisionTree {
 
-    private ArrayList<Double> forestResults;
-    private ArrayList<RegressionTree[]> forest;
-    private int forestSize;
+    private RegressionTree[][] forest;
     private int nFolds;
     public double[] preds;
-    private double foldsResults;
     private Set<String> columnsUsed = new LinkedHashSet<>();
+    private int forestSize;
 
-    public Forest(int forestSize) {
-        this.forestSize = forestSize;
-        forestResults = new ArrayList<>();
-        forest = new ArrayList<>();
-    }
-
-    public void crossValidate(int iterations, int forestSize, int seed, Metrics metric, int nFolds, double featureFrac) throws InterruptedException {
-
-        System.out.println("Training...");
+    public void crossValidate(int iterations, int forestSize, int seed, Metrics metric, int k, double featureFrac) throws InterruptedException {
         
-        this.nFolds = nFolds;
-        RegressionTree[] foldsForest = new RegressionTree[nFolds];
+        this.forestSize = forestSize;
+        this.nFolds = k;
+        forest = new RegressionTree[forestSize][nFolds];
         KFold kfold = new KFold(nFolds);
         kfold.split();
         double forestAverage = 0.0;
         double foldsAverage = 0.0;
-
-//        System.out.println("iteration \t");
+        
+        System.out.println("Initializing forest...");
         for (int i = 0; i < forestSize; i++) {
             for (int j = 0; j < nFolds; j++) {
-                foldsForest[j] = new RegressionTree(iterations, (seed + i), metric, featureFrac);
-                foldsForest[j].setValSets(kfold.getTrainIndexes()[j], kfold.getValidIndexes()[j]);
-                foldsForest[j].start();
+                forest[i][j] = new RegressionTree(iterations, (seed + i), metric, featureFrac);
+                forest[i][j].setValSets(kfold.getTrainIndexes()[j], kfold.getValidIndexes()[j]);
+            }
+        }
+
+        System.out.println("Training...");
+        for (int i = 0; i < forestSize; i++) {
+            for (int j = 0; j < nFolds; j++) {
+                forest[i][j].start();
             }
             for (int j = 0; j < nFolds; j++) {
-                foldsForest[j].join();
-                foldsAverage += foldsForest[j].getResult();
-//                isAllColsUsed(foldsForest[j].getTrainCols());
+                forest[i][j].join();
+                foldsAverage += forest[i][j].getResult();
             }
-            forest.add(foldsForest);
             forestAverage += foldsAverage / nFolds;
             System.out.println(
                     i + 1
-                    + "\t" + "valid-" + metric.getName() + ": " + String.format("%.05f", foldsAverage / nFolds)
+                    + "\t valid-" + metric.getName() + ": " + String.format("%.05f", foldsAverage / nFolds)
                     + "\t forest-" + metric.getName() + ": " + String.format("%.05f", forestAverage / (i + 1))
                     + "\t seed: " + (seed + i));
-//                    + "\t " + printTotalColsUsed());
             foldsAverage = 0.0;
         }
-    }
-
-//    private double getFoldsMean() {
-//        double mean = 0.0;
-//        for (int i = 0; i < foldsResults.size(); i++) {
-//            mean += foldsResults.get(i);
-//        }
-//        return mean / foldsResults.size();
-//    }
-
-    public double getForestMean() {
-        double mean = 0.0;
-        for (Double d : forestResults) {
-            mean += d;
-        }
-        return mean / forestResults.size();
     }
 
     public void predict() {
         preds = new double[Data.test.length];
         for (int i = 0; i < forestSize; i++) {
             for (int j = 0; j < nFolds; j++) {
-                double[] foldsPreds = forest.get(i)[j].predict();
+                System.out.println(i + "," + j + ": " + forest[i][j].getBestExp());
+                double[] foldsPreds = forest[i][j].predict();
                 for (int k = 0; k < preds.length; k++) {
                     preds[k] += foldsPreds[k];
                 }

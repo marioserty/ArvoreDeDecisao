@@ -20,53 +20,52 @@ import Metrics.*;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
-        
+
         //Dataset reading
 //        Data.ReadTrain("../datasets/readmission_data_for_modeling.csv", 25000, 83, ",");
-
 //        Data.ReadTrain("datasets/breast_cancer_reshaped.csv", 569, 31, ",");
-
 //        Data.ReadTrain("../datasets/titanic/reshaped_train.csv", 891, 9, ",");
 //        Data.ReadTest("../datasets/titanic/reshaped_test.csv", 418, 8, ",");
-
 //        Data.ReadTrain("datasets/santander/train.csv", 200000, 200, ",");
 //        Data.ReadTest("datasets/santander/test.csv", 200000, 199, ",");
-
         Data.ReadTrain("../datasets/santander-customer-satisfaction/train.csv", 76020, 371, ",");
+        Data.ReadTest("../datasets/santander-customer-satisfaction/test.csv", 75818, 370, ",");
 
         // Tree parameters
         int seed = 2028;
         int iterations = 500;
         int forestSize = 100;
         int nFolds = 4;
-        double featureFrac = .5;
+        double featureFrac = 1;
         Metrics metric = new AUC();
+        boolean forest = false;
 
-        // Parallel training code
-        Forest f = new Forest(forestSize);
-        f.crossValidate(iterations, forestSize, seed, metric, nFolds, featureFrac);
+        if (forest) {
+            // Parallel training code
+            Forest f = new Forest();
+            f.crossValidate(iterations, forestSize, seed, metric, nFolds, featureFrac);
+            f.predict();
 //        Data.WritePredictions("../datasets/titanic/sub.csv", "../datasets/titanic/gender_submission.csv", f.preds);
-//        Data.ReadTest("../datasets/santander-customer-satisfaction/test.csv", 75818, 370, ",");
-//        Data.WritePredictions("../datasets/santander-customer-satisfaction/sub.csv", "../datasets/santander-customer-satisfaction/sample_submission.csv", f.preds);
-        
-        System.out.println("Finished!");
-        System.out.println("Parameters used: ");
-        
+            Data.WritePredictions("../datasets/santander-customer-satisfaction/sub.csv", "../datasets/santander-customer-satisfaction/sample_submission.csv", f.preds);
+            System.out.println("Finished!");
+        } else {
+            // Sequential training code
+            KFold kfold = new KFold(nFolds);
+            kfold.split();
+            double mean = 0.0;
 
-        // Sequential training code
-//        KFold kfold = new KFold(nFolds);
-//        kfold.split();
-//        double mean = 0.0;
-//
-//        RegressionTree rwt;
-//        for (int i = 0; i < nFolds; i++) {
-//            rwt = new RegressionTree(iterations, verbose, seed, metric, featureFrac);
-//            rwt.setValSets(kfold.getTrainIndexes()[i], kfold.getValidIndexes()[i]);
-//            rwt.train();
-//            mean += rwt.getResult();
-//            System.out.println("Fold " + (i + 1) + " " + metric.getName() + " " + rwt.getResult());
-//        }
-//        System.out.println("Full : " + mean / nFolds);
+            RegressionTree rwt;
+            rwt = new RegressionTree(iterations, seed, metric, featureFrac);
+            for (int i = 0; i < nFolds; i++) {
+                rwt.setValSets(kfold.getTrainIndexes()[i], kfold.getValidIndexes()[i]);
+                rwt.train();
+                mean += rwt.getResult();
+                System.out.println("Fold " + (i + 1) + " " + metric.getName() + " " + rwt.getResult());
+            }
+            System.out.println("Full : " + mean / nFolds);
+            Data.WritePredictions("../datasets/santander-customer-satisfaction/sub.csv", "../datasets/santander-customer-satisfaction/sample_submission.csv", rwt.predict());
+            System.out.println("Finished!");
+        }
     }
 
 }

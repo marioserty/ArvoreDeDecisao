@@ -33,7 +33,7 @@ public class GreaterThan extends Binary {
             return super.right.processOnTrain(instance);
         }
     }
-    
+
     @Override
     public double processOnTest(int instance) {
         if (Data.train[instance][getVariavel()] > getLabel()) {
@@ -41,6 +41,11 @@ public class GreaterThan extends Binary {
         } else {
             return super.right.processOnTest(instance);
         }
+    }
+
+    @Override
+    public int height() {
+        return 1;
     }
 
     public String toString(Data d) {

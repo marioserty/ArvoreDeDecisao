@@ -35,4 +35,14 @@ public abstract class Binary implements ArithmeticExpression{
         return right;
     }
     
+    @Override
+    public void setLeft(ArithmeticExpression exp) {
+        this.left = exp;
+    }
+
+    @Override
+    public void setRight(ArithmeticExpression exp) {
+        this.right = exp;
+    }
+    
 }

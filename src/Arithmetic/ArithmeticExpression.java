@@ -17,10 +17,16 @@ public interface ArithmeticExpression extends Cloneable{
     
     public double processOnTest(int instance);
     
+    public int height();
+    
     @Override
     public String toString();
     
     public Object clone();
+    
+    public void setRight(ArithmeticExpression exp);
+    
+    public void setLeft(ArithmeticExpression exp);
     
     public ArithmeticExpression getRight();
     

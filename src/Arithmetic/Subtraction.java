@@ -34,6 +34,11 @@ public class Subtraction extends Binary {
     }
 
     @Override
+    public int height() {
+        return Math.max(super.getLeft().height(), super.getRight().height()) + 1;
+    }
+
+    @Override
     public String toString() {
         return ("(" + super.getLeft().toString() + " - " + super.getRight().toString() + ")");
     }

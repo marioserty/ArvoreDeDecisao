@@ -15,7 +15,7 @@ import Data.Data;
  * @author mario
  */
 public class Tanh extends Unary {
-    
+
     ArithmeticExpression exp;
 
     public Tanh(ArithmeticExpression exp) {
@@ -38,11 +38,16 @@ public class Tanh extends Unary {
     }
 
     @Override
+    public int height() {
+        return 1;
+    }
+
+    @Override
     public String toString() {
-        if(exp instanceof Variable){
+        if (exp instanceof Variable) {
             Variable var = (Variable) exp;
             return "tanh(data[\'" + Data.columns[var.getColumn()] + "\'])";
-        }else{
+        } else {
             return "tanh(" + exp.toString() + ")";
         }
     }
@@ -54,6 +59,16 @@ public class Tanh extends Unary {
 
     @Override
     public ArithmeticExpression getLeft() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setRight(ArithmeticExpression exp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLeft(ArithmeticExpression exp) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

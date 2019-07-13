@@ -11,16 +11,16 @@ import Data.Data;
  *
  * @author Mário
  */
-public final class Constant extends Unary{
-    
+public final class Constant extends Unary {
+
     double value;
-    
-    public Constant(double v){
+
+    public Constant(double v) {
         this.value = v;
     }
-    
+
     @Override
-    public Object clone(){
+    public Object clone() {
         return (ArithmeticExpression) super.clone();
     }
 
@@ -28,27 +28,43 @@ public final class Constant extends Unary{
     public double processOnTrain(int instancia) {
         return this.value;
     }
-    
+
     @Override
     public double processOnTest(int instancia) {
         return this.value;
     }
 
-    public String toString(Data d) {
-        return Double.toString(value);
+    @Override
+    public int height() {
+        return 1;
     }
-    
-    public void setValor(double newV){
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    public void setValor(double newV) {
         this.value = newV;
-    }    
+    }
+
+    @Override
+    public void setRight(ArithmeticExpression exp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLeft(ArithmeticExpression exp) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public ArithmeticExpression getRight() {
-        return new Constant(value);
+        return this;
     }
 
     @Override
     public ArithmeticExpression getLeft() {
-        return new Constant(value);
+        return this;
     }
 }

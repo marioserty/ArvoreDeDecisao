@@ -13,9 +13,9 @@ import Data.Data;
  */
 public final class Addition extends Binary {
 
-    public Addition(ArithmeticExpression esq, ArithmeticExpression dir) {
-        super.right = dir;
-        super.left = esq;
+    public Addition(ArithmeticExpression l, ArithmeticExpression r) {
+        super.left = l;
+        super.right = r;
     }
 
     @Override
@@ -27,10 +27,15 @@ public final class Addition extends Binary {
     public double processOnTrain(int instancia) {
         return (super.getLeft().processOnTrain(instancia) + super.getRight().processOnTrain(instancia));
     }
-    
+
     @Override
     public double processOnTest(int instancia) {
         return (super.getLeft().processOnTest(instancia) + super.getRight().processOnTest(instancia));
+    }
+
+    @Override
+    public int height() {
+        return Math.max(super.getLeft().height(), super.getRight().height()) + 1;
     }
 
     @Override
