@@ -28,8 +28,8 @@ public class Main {
 //        Data.ReadTest("../datasets/titanic/reshaped_test.csv", 418, 8, ",");
 //        Data.ReadTrain("datasets/santander/train.csv", 200000, 200, ",");
 //        Data.ReadTest("datasets/santander/test.csv", 200000, 199, ",");
-        Data.ReadTrain("../datasets/santander-customer-satisfaction/train.csv", 76020, 371, ",");
-        Data.ReadTest("../datasets/santander-customer-satisfaction/test.csv", 75818, 370, ",");
+//        Data.ReadTrain("../datasets/santander-customer-satisfaction/train.csv", 76020, 371, ",");
+//        Data.ReadTest("../datasets/santander-customer-satisfaction/test.csv", 75818, 370, ",");
 
         // Tree parameters
         int seed = 2028;

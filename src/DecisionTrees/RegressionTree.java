@@ -27,7 +27,7 @@ public class RegressionTree extends DecisionTree {
     private double featureFrac;
     private Metrics metric;
 
-    private Random r;
+    private Random random;
     private ArrayList<Integer> trainIndexes;
     private ArrayList<Integer> valIndexes;
     private ArrayList<Integer> trainCols;
@@ -50,12 +50,12 @@ public class RegressionTree extends DecisionTree {
         this.iterations = iterations;;
         this.metric = metric;
         this.seed = seed;
-        this.r = new Random(this.seed);
+        this.random = new Random(this.seed);
         this.featureFrac = featureFrac;
         this.trainCols = new ArrayList<>();
 
         while (trainCols.size() < (int) (featureFrac * Data.numCols)) {
-            int column = r.nextInt(Data.numCols);
+            int column = random.nextInt(Data.numCols);
             if (!trainCols.contains(column)) {
                 trainCols.add(column);
             }
@@ -86,18 +86,21 @@ public class RegressionTree extends DecisionTree {
     }
 
     public void train() {
+        bestExp = geraAlturaDois();
+        currentExp = geraAlturaDois();
 //        bestExp = generateInitialTree(6);
-        bestExp = geraAlturaTres();
         for (int i = 0; i < iterations; i++) {
-            currentExp = mutacao(bestExp);
+            mutacao();
             if (EvaluateOnFoldedTrain(currentExp) > EvaluateOnFoldedTrain(getBestExp())) {
-                bestExp = currentExp;
+                bestExp = (ArithmeticExpression) currentExp.clone();
             }
 
-            System.out.println("Iteration " + i + "\t"
-                    + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTrain(bestExp)) + "\t"
-                    + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTest(bestExp))
-                    + " height: " + bestExp.height());
+            if (i % 100 == 0) {
+                System.out.println("Iteration " + i + "\t"
+                        + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTrain(bestExp)) + "\t"
+                        + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTest(bestExp))
+                        + " height: " + bestExp.height());
+            }
 
         }
         result = EvaluateOnFoldedTest(bestExp);
@@ -107,7 +110,7 @@ public class RegressionTree extends DecisionTree {
     public void run() {
         bestExp = generateInitialTree(12);
         for (int i = 0; i < iterations; i++) {
-            currentExp = mutacao(bestExp);
+            mutacao();
             if (EvaluateOnFoldedTrain(currentExp) > EvaluateOnFoldedTrain(getBestExp())) {
                 bestExp = currentExp;
             }
@@ -124,7 +127,7 @@ public class RegressionTree extends DecisionTree {
         for (int i = 0; i < Data.test.length; i++) {
             if (Double.isNaN(1.0 / (1.0 + Math.exp(-bestExp.processOnTest(i))))) {
                 preds[i] = 0.0;
-            }else{
+            } else {
                 preds[i] = 1.0 / (1.0 + Math.exp(-bestExp.processOnTest(i)));
             }
         }
@@ -169,32 +172,23 @@ public class RegressionTree extends DecisionTree {
 //        }
 //    }
     private ArithmeticExpression geraAlturaUm() {
-        switch (r.nextInt(2)) {
+        switch (random.nextInt(2)) {
             case 0:
-                switch (r.nextInt(2)) {
+                switch (random.nextInt(2)) {
                     case 0:
-                        return new Constant(-r.nextInt());
+                        return new Constant(-random.nextInt());
                     case 1:
-                        return new Constant(r.nextInt());
+                        return new Constant(random.nextInt());
                     case 2:
-                        return new Constant(-r.nextDouble());
+                        return new Constant(-random.nextDouble());
                     case 3:
-                        return new Constant(r.nextDouble());
+                        return new Constant(random.nextDouble());
                 }
             case 1:
-                return new Variable(getTrainCols().get(r.nextInt(getTrainCols().size())));
-            case 2:
-                return new Sin(new Variable(getTrainCols().get(r.nextInt(getTrainCols().size()))));
-            case 3:
-                return new Cos(new Variable(getTrainCols().get(r.nextInt(getTrainCols().size()))));
-            case 4:
-                return new Tan(new Variable(getTrainCols().get(r.nextInt(getTrainCols().size()))));
-            case 5:
-                return new Tanh(new Variable(getTrainCols().get(r.nextInt(getTrainCols().size()))));
-            case 6:
-                return new Arctan(new Variable(getTrainCols().get(r.nextInt(getTrainCols().size()))));
+                return new Variable(getTrainCols().get(random.nextInt(getTrainCols().size())));
+            default:
+                return null;
         }
-        return null;
     }
 
     private ArithmeticExpression geraAlturaDois() {
@@ -203,7 +197,7 @@ public class RegressionTree extends DecisionTree {
         ArithmeticExpression left = geraAlturaUm();
         ArithmeticExpression right = geraAlturaUm();
 
-        switch (r.nextInt(4)) {
+        switch (random.nextInt(4)) {
             case 0:
                 return new Addition(left, right);
             case 1:
@@ -221,10 +215,10 @@ public class RegressionTree extends DecisionTree {
         ArithmeticExpression right;
         ArithmeticExpression left;
 
-        if (r.nextDouble() < 1.0 / 3.0) {
+        if (random.nextDouble() < 1.0 / 3.0) {
             right = geraAlturaDois();
             left = geraAlturaUm();
-        } else if (r.nextDouble() < 2.0 / 3.0) {
+        } else if (random.nextDouble() < 2.0 / 3.0) {
             right = geraAlturaUm();
             left = geraAlturaDois();
         } else {
@@ -232,64 +226,64 @@ public class RegressionTree extends DecisionTree {
             left = geraAlturaDois();
         }
 
-        if (r.nextDouble() < 1.0 / 4.0) {
+        if (random.nextDouble() < 1.0 / 4.0) {
             return new Addition(left, right);
-        } else if (r.nextDouble() < 2.0 / 4.0) {
+        } else if (random.nextDouble() < 2.0 / 4.0) {
             return new Subtraction(left, right);
-        } else if (r.nextDouble() < 3.0 / 4.0) {
+        } else if (random.nextDouble() < 3.0 / 4.0) {
             return new Multiplication(left, right);
         } else {
             return new Exponentiation(left, right);
         }
     }
 
-    private ArithmeticExpression mutacao(ArithmeticExpression exp) {
+    private ArithmeticExpression getRandomNode(ArithmeticExpression exp) {
+        int side = random.nextInt(4);
+        switch (side) {
+            case 1:
+                return exp.getLeft();
+            case 2:
+                return exp.getRight();
+            case 3:
+                return getRandomNode(exp.getLeft());
+            case 4:
+                return getRandomNode(exp.getRight());
+            default:
+                return null;
+        }
+    }
+
+    private void mutacao() {
         /**
          * apagar esquerda e gerar alt3, 2, apagar direita e gerar alt3, 2
          * trocar meio;
          */
-//        System.out.println("Mutation");
-        ArithmeticExpression left;
-        ArithmeticExpression right;
 
-        double side = r.nextDouble();
+        double p = random.nextDouble();
 
-        if (side < 0.25) {
-            left = exp.getLeft();
-            right = mutacao(exp.getRight());
-        } else if (side < 0.50) {
-            left = mutacao(exp.getLeft());
-            right = exp.getRight();
-        } else if (side < 0.75) {
-            left = geraAlturaDois();
-            right = exp.getRight();
+        if (p < 0.25) {
+            currentExp.setLeft((ArithmeticExpression) bestExp.getLeft().clone());
+            getRandomNode((ArithmeticExpression) bestExp.getRight().clone());
+        } else if (p < 0.50) {
+            currentExp.setRight((ArithmeticExpression) bestExp.getRight().clone());
+            getRandomNode((ArithmeticExpression) bestExp.getLeft().clone());
+        } else if (p < 0.75) {
+            currentExp.setLeft(geraAlturaDois());
+            currentExp.setRight((ArithmeticExpression) bestExp.getRight().clone());
         } else {
-            left = exp.getRight();
-            right = geraAlturaDois();
-
-        }
-
-        double operation = r.nextDouble();
-
-        if (operation < 0.25) {
-            return new Addition(left, right);
-        } else if (operation < 0.50) {
-            return new Subtraction(left, right);
-        } else if (operation < 0.75) {
-            return new Multiplication(left, right);
-        } else {
-            return new Exponentiation(left, right);
+            currentExp.setLeft((ArithmeticExpression) bestExp.getRight().clone());
+            currentExp.setRight(geraAlturaDois());
         }
     }
 
     public ArithmeticExpression generateInitialTree(int height) {
-        
+
         ArithmeticExpression tree = geraAlturaTres();
-        
+
         while (tree.height() < height) {
-            tree = mutacao(tree);
+//            tree = mutacao(tree);
         }
-        
+
         return tree;
     }
 
@@ -303,7 +297,7 @@ public class RegressionTree extends DecisionTree {
 
     public void setSeed(int newSeed) {
         this.seed = newSeed;
-        r.setSeed(seed);
+        random.setSeed(seed);
     }
 
     public int getSeed() {
