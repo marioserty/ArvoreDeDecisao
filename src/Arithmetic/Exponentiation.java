@@ -12,8 +12,8 @@ package Arithmetic;
 public class Exponentiation extends Binary {
 
     public Exponentiation(ArithmeticExpression left, ArithmeticExpression right) {
-        super.right = right;
         super.left = left;
+        super.right = right;
     }
 
     @Override

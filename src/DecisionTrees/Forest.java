@@ -26,7 +26,7 @@ public class Forest extends DecisionTree {
     private Set<String> columnsUsed = new LinkedHashSet<>();
     private int forestSize;
 
-    public void crossValidate(int iterations, int forestSize, int seed, Metrics metric, int k, double featureFrac) throws InterruptedException {
+    public void crossValidate(int iterations, int forestSize, int seed, Metrics metric, int k, double featureFrac, double samplesFrac) throws InterruptedException {
         
         this.forestSize = forestSize;
         this.nFolds = k;
@@ -39,8 +39,8 @@ public class Forest extends DecisionTree {
         System.out.println("Initializing forest...");
         for (int i = 0; i < forestSize; i++) {
             for (int j = 0; j < nFolds; j++) {
-                forest[i][j] = new RegressionTree(iterations, (seed + i), metric, featureFrac);
-                forest[i][j].setValSets(kfold.getTrainIndexes()[j], kfold.getValidIndexes()[j]);
+                forest[i][j] = new RegressionTree(iterations, (seed + i), metric, featureFrac, samplesFrac);
+                forest[i][j].setValidationSets(kfold.getTrainIndexes()[j], kfold.getValidIndexes()[j]);
             }
         }
 
@@ -67,7 +67,6 @@ public class Forest extends DecisionTree {
         preds = new double[Data.test.length];
         for (int i = 0; i < forestSize; i++) {
             for (int j = 0; j < nFolds; j++) {
-                System.out.println(i + "," + j + ": " + forest[i][j].getBestExp());
                 double[] foldsPreds = forest[i][j].predict();
                 for (int k = 0; k < preds.length; k++) {
                     preds[k] += foldsPreds[k];

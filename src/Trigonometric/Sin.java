@@ -44,32 +44,7 @@ public class Sin extends Unary {
 
     @Override
     public String toString() {
-        if (exp instanceof Variable) {
-            Variable var = (Variable) exp;
-            return "sin(data[\'" + Data.columns[var.getColumn()] + "\'])";
-        } else {
-            return "sin(" + exp.toString() + ")";
-        }
-    }
-
-    @Override
-    public ArithmeticExpression getRight() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ArithmeticExpression getLeft() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setRight(ArithmeticExpression exp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setLeft(ArithmeticExpression exp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "sin(" + exp.toString() + ")";
     }
 
 }

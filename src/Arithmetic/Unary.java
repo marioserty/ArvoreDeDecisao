@@ -32,10 +32,6 @@ public abstract class Unary implements ArithmeticExpression {
         return 1;
     }
 
-    public ArithmeticExpression getExp() {
-        return exp;
-    }
-
     @Override
     public double processOnTrain(int instance) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -44,5 +40,25 @@ public abstract class Unary implements ArithmeticExpression {
     @Override
     public double processOnTest(int instance) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+        @Override
+    public ArithmeticExpression getLeft() {
+        return this;
+    }
+
+    @Override
+    public ArithmeticExpression getRight() {
+        return this;
+    }
+    
+    @Override
+    public void setLeft(ArithmeticExpression exp) {
+        this.exp = exp;
+    }
+
+    @Override
+    public void setRight(ArithmeticExpression exp) {
+        this.exp = exp;
     }
 }

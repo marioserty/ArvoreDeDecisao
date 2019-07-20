@@ -13,6 +13,7 @@ import Trigonometric.Cos;
 import Arithmetic.*;
 import Data.Data;
 import Metrics.Metrics;
+import Trigonometric.Log10;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,7 +25,8 @@ public class RegressionTree extends DecisionTree {
 
     private int seed;
     private int iterations;
-    private double featureFrac;
+    private double featureFraction;
+    private double samplesFraction;
     private Metrics metric;
 
     private Random random;
@@ -33,52 +35,61 @@ public class RegressionTree extends DecisionTree {
     private ArrayList<Integer> trainCols;
     private ArithmeticExpression bestExp;
     private ArithmeticExpression currentExp;
+
     private double result;
-    double[] trainPreds;
-    double[] valPreds;
-    int[] valTarget;
-    int[] trainTarget;
+    private double[] trainPreds;
+    private double[] valPreds;
+    private int[] valTarget;
+    private int[] trainTarget;
 
     /**
      *
-     * @param iterations
-     * @param seed
-     * @param metric
-     * @param featureFrac
+     * @param iterations number of training iterations
+     * @param seed seed for random number generator
+     * @param metric metric to be evaluated
+     * @param featureFraction percentage of features to train (from 0 to 1)
+     * @param samplesFraction percentage of samples to train (from 0 to 1)
      */
-    public RegressionTree(int iterations, int seed, Metrics metric, double featureFrac) {
+    public RegressionTree(int iterations, int seed, Metrics metric, double featureFraction, double samplesFraction) {
+        // Initialize tree parameters
         this.iterations = iterations;;
         this.metric = metric;
         this.seed = seed;
         this.random = new Random(this.seed);
-        this.featureFrac = featureFrac;
+        this.featureFraction = featureFraction;
+        this.samplesFraction = samplesFraction;
         this.trainCols = new ArrayList<>();
 
-        while (trainCols.size() < (int) (featureFrac * Data.numCols)) {
+        // Fraction training features
+        while (trainCols.size() < (int) (featureFraction * Data.numCols)) {
             int column = random.nextInt(Data.numCols);
             if (!trainCols.contains(column)) {
                 trainCols.add(column);
             }
         }
-//        for (int i = 0; i < trainCols.size(); i++) {
-//            System.out.print(Data.columns[trainCols.get(i)] + " ");
-//        }
-//        System.out.println("");
     }
 
-    public void setValSets(ArrayList<Integer> train, ArrayList<Integer> valid) {
-
+    public void setValidationSets(ArrayList<Integer> train, ArrayList<Integer> valid) {
+        // Fractioning training samples        
+        int initialSize = train.size();
+        while (train.size() < (int) (initialSize * samplesFraction)) {
+            train.remove(random.nextInt(train.size()));
+        }
+        initialSize = valid.size();
+        while (valid.size() < (int) (initialSize * samplesFraction)) {
+            valid.add(random.nextInt(valid.size()));
+        }
+        // Set trainable indexes
         trainIndexes = train;
         valIndexes = valid;
-
-        trainPreds = new double[trainIndexes.size()];
-        valPreds = new double[valIndexes.size()];
-
+        // Instantiate training and validation predictions
+        trainPreds = new double[train.size()];
+        valPreds = new double[valid.size()];
+        // Set training and validation targets
         trainTarget = new int[trainIndexes.size()];
         for (int i = 0; i < trainTarget.length; i++) {
             trainTarget[i] = Data.target[trainIndexes.get(i)];
         }
-
         valTarget = new int[valIndexes.size()];
         for (int i = 0; i < valTarget.length; i++) {
             valTarget[i] = Data.target[valIndexes.get(i)];
@@ -86,95 +97,85 @@ public class RegressionTree extends DecisionTree {
     }
 
     public void train() {
-        bestExp = geraAlturaDois();
-        currentExp = geraAlturaDois();
-//        bestExp = generateInitialTree(6);
+        bestExp = generateDepthTree();
+        currentExp = generateDepthTree();
         for (int i = 0; i < iterations; i++) {
-            mutacao();
-            if (EvaluateOnFoldedTrain(currentExp) > EvaluateOnFoldedTrain(getBestExp())) {
+            mutation();
+            if (EvaluateOnTrain(currentExp) > EvaluateOnTrain(getBestExp())) {
                 bestExp = (ArithmeticExpression) currentExp.clone();
             }
 
             if (i % 100 == 0) {
                 System.out.println("Iteration " + i + "\t"
-                        + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTrain(bestExp)) + "\t"
-                        + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTest(bestExp))
+                        + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnTrain(bestExp)) + "\t"
+                        + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnTest(bestExp))
                         + " height: " + bestExp.height());
             }
 
         }
-        result = EvaluateOnFoldedTest(bestExp);
+        result = EvaluateOnTest(bestExp);
     }
 
     @Override
     public void run() {
-        bestExp = generateInitialTree(12);
+        bestExp = generateDepthTree();
+        currentExp = generateDepthTree();
         for (int i = 0; i < iterations; i++) {
-            mutacao();
-            if (EvaluateOnFoldedTrain(currentExp) > EvaluateOnFoldedTrain(getBestExp())) {
-                bestExp = currentExp;
+            mutation();
+            if (EvaluateOnTrain(currentExp) > EvaluateOnTrain(getBestExp())) {
+                bestExp = (ArithmeticExpression) currentExp.clone();
             }
 
 //            System.out.println("Iteration " + i + "\t"
 //                    + " train-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTrain(bestExp)) + "\t"
 //                    + " valid-" + metric.getName() + ": " + String.format("%.05f", EvaluateOnFoldedTest(bestExp)));
         }
-        result = EvaluateOnFoldedTest(bestExp);
+        result = EvaluateOnTest(bestExp);
     }
 
+    /**
+     * predict the test data if it's set
+     * @return predictions for test data
+     * or null if tree is not trained or if test data has not been set
+     */
     public double[] predict() {
-        double[] preds = new double[Data.test.length];
-        for (int i = 0; i < Data.test.length; i++) {
-            if (Double.isNaN(1.0 / (1.0 + Math.exp(-bestExp.processOnTest(i))))) {
-                preds[i] = 0.0;
-            } else {
-                preds[i] = 1.0 / (1.0 + Math.exp(-bestExp.processOnTest(i)));
+        if (bestExp == null) {
+            System.err.println("Tree not yet trained! Cannot predict.");
+            return null;
+        } else if (Data.test == null) {
+            System.err.println("Test data not set!");
+            return null;
+        } else {
+            double[] preds = new double[Data.test.length];
+            for (int i = 0; i < Data.test.length; i++) {
+                if (Double.isNaN(1.0 / (1.0 + Math.exp(-bestExp.processOnTest(i))))) {
+                    preds[i] = 0.0;
+                } else {
+                    preds[i] = 1.0 / (1.0 + Math.exp(-bestExp.processOnTest(i)));
+                }
             }
+            return preds;
         }
-        return preds;
     }
 
-    public void saveExpressions(String fileName) {
-//        BufferedWriter writer;
-//        try {
-//            for (int i = 0; i < forest.length; i++) {
-//                writer = new BufferedWriter(new FileWriter("expressions/" + fileName + "_" + i + ".txt"));
-//                writer.write(forest[i].toString());
-//            }
-//            System.out.println("Expressions saved successfully!");
-//        } catch (IOException ex) {
-//            System.out.println("Error while writing expression: " + ex.getMessage());
-//        }
-    }
-
-    public double EvaluateOnFoldedTrain(ArithmeticExpression exp) {
-
+    public double EvaluateOnTrain(ArithmeticExpression exp) {
         for (int i = 0; i < trainPreds.length; i++) {
             trainPreds[i] = 1.0 / (1.0 + Math.exp(-exp.processOnTrain(trainIndexes.get(i))));
         }
         return metric.measure(trainTarget, trainPreds);
     }
 
-    public double EvaluateOnFoldedTest(ArithmeticExpression exp) {
-
+    public double EvaluateOnTest(ArithmeticExpression exp) {
         for (int i = 0; i < valPreds.length; i++) {
             valPreds[i] = 1.0 / (1.0 + Math.exp(-exp.processOnTrain(valIndexes.get(i))));
         }
-
         return metric.measure(valTarget, valPreds);
     }
 
-//    private ArithmeticExpression geraAlturaUm() {
-//        if (r.nextDouble() < 0.5) {
-//            return new Constant(r.nextDouble());
-//        } else {
-//            return new Variable((int) (r.nextDouble() * Data.numCols - 1));
-//        }
-//    }
-    private ArithmeticExpression geraAlturaUm() {
+    private ArithmeticExpression generateDepthOne() {
         switch (random.nextInt(2)) {
             case 0:
-                switch (random.nextInt(2)) {
+                switch (random.nextInt(4)) {
                     case 0:
                         return new Constant(-random.nextInt());
                     case 1:
@@ -191,39 +192,44 @@ public class RegressionTree extends DecisionTree {
         }
     }
 
-    private ArithmeticExpression geraAlturaDois() {
-//        System.out.println("gen Depth 2");
+    private ArithmeticExpression generateDepthTwo() {
 
-        ArithmeticExpression left = geraAlturaUm();
-        ArithmeticExpression right = geraAlturaUm();
-
-        switch (random.nextInt(4)) {
+        switch (random.nextInt(8)) {
             case 0:
-                return new Addition(left, right);
+                return new Addition(generateDepthOne(), generateDepthOne());
             case 1:
-                return new Subtraction(left, right);
+                return new Subtraction(generateDepthOne(), generateDepthOne());
             case 2:
-                return new Multiplication(left, right);
+                return new Multiplication(generateDepthOne(), generateDepthOne());
             case 3:
-                return new Exponentiation(left, right);
+                return new Exponentiation(generateDepthOne(), generateDepthOne());
+            case 4:
+                return new Log10(generateDepthOne());
+            case 5:
+                return new Sin(generateDepthOne());
+            case 6:
+                return new Cos(generateDepthOne());
+            case 7:
+                return new Tan(generateDepthOne());
+            default:
+                return null;
         }
-        return null;
     }
 
-    private ArithmeticExpression geraAlturaTres() {
+    private ArithmeticExpression generateDepthTree() {
 
         ArithmeticExpression right;
         ArithmeticExpression left;
 
         if (random.nextDouble() < 1.0 / 3.0) {
-            right = geraAlturaDois();
-            left = geraAlturaUm();
+            right = generateDepthTwo();
+            left = generateDepthOne();
         } else if (random.nextDouble() < 2.0 / 3.0) {
-            right = geraAlturaUm();
-            left = geraAlturaDois();
+            right = generateDepthOne();
+            left = generateDepthTwo();
         } else {
-            right = geraAlturaDois();
-            left = geraAlturaDois();
+            right = generateDepthTwo();
+            left = generateDepthTwo();
         }
 
         if (random.nextDouble() < 1.0 / 4.0) {
@@ -240,51 +246,48 @@ public class RegressionTree extends DecisionTree {
     private ArithmeticExpression getRandomNode(ArithmeticExpression exp) {
         int side = random.nextInt(4);
         switch (side) {
+            case 0:
+                return generateDepthTwo();
             case 1:
-                return exp.getLeft();
+                return generateDepthTree();
             case 2:
-                return exp.getRight();
-            case 3:
                 return getRandomNode(exp.getLeft());
-            case 4:
+            case 3:
                 return getRandomNode(exp.getRight());
             default:
                 return null;
         }
     }
 
-    private void mutacao() {
+    private void mutation() {
         /**
          * apagar esquerda e gerar alt3, 2, apagar direita e gerar alt3, 2
          * trocar meio;
          */
+        ArithmeticExpression node;
 
         double p = random.nextDouble();
 
-        if (p < 0.25) {
+        if (p < 0.10) {
             currentExp.setLeft((ArithmeticExpression) bestExp.getLeft().clone());
-            getRandomNode((ArithmeticExpression) bestExp.getRight().clone());
-        } else if (p < 0.50) {
+            currentExp.setRight(getRandomNode((ArithmeticExpression) bestExp.getRight().clone()));
+        } else if (p < 0.20) {
             currentExp.setRight((ArithmeticExpression) bestExp.getRight().clone());
-            getRandomNode((ArithmeticExpression) bestExp.getLeft().clone());
-        } else if (p < 0.75) {
-            currentExp.setLeft(geraAlturaDois());
+            currentExp.setLeft(getRandomNode((ArithmeticExpression) bestExp.getLeft().clone()));
+        } else if (p < 0.60) {
+            currentExp.setLeft(generateDepthTwo());
             currentExp.setRight((ArithmeticExpression) bestExp.getRight().clone());
         } else {
-            currentExp.setLeft((ArithmeticExpression) bestExp.getRight().clone());
-            currentExp.setRight(geraAlturaDois());
+            currentExp.setLeft((ArithmeticExpression) bestExp.getLeft().clone());
+            currentExp.setRight(generateDepthTwo());
         }
     }
 
-    public ArithmeticExpression generateInitialTree(int height) {
-
-        ArithmeticExpression tree = geraAlturaTres();
-
-        while (tree.height() < height) {
-//            tree = mutacao(tree);
+    public void generateInitialTree(int height) {
+        currentExp = generateDepthTwo();
+        while (currentExp.height() < height) {
+            currentExp = getRandomNode(bestExp);
         }
-
-        return tree;
     }
 
     public double getResult() throws InterruptedException {

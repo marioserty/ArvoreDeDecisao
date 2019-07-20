@@ -5,8 +5,6 @@
  */
 package Arithmetic;
 
-import Data.Data;
-
 /**
  *
  * @author Mário

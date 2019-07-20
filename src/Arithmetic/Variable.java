@@ -35,11 +35,6 @@ public class Variable extends Unary {
     }
 
     @Override
-    public int height() {
-        return 1;
-    }
-
-    @Override
     public String toString() {
         return "data[\'" + Data.columns[this.getColumn()] + "\']";
     }
@@ -51,25 +46,4 @@ public class Variable extends Unary {
     public int getColumn() {
         return column;
     }
-
-    @Override
-    public void setRight(ArithmeticExpression exp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setLeft(ArithmeticExpression exp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ArithmeticExpression getRight() {
-        return this;
-    }
-
-    @Override
-    public ArithmeticExpression getLeft() {
-        return this;
-    }
-
 }

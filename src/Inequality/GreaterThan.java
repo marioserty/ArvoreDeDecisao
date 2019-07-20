@@ -18,11 +18,11 @@ public class GreaterThan extends Binary {
     private int variable;
     private double label;
 
-    public GreaterThan(int var, double label, ArithmeticExpression r, ArithmeticExpression l) {
-        this.variable = var;
+    public GreaterThan(int variable, double label, ArithmeticExpression right, ArithmeticExpression left) {
+        this.variable = variable;
         this.label = label;
-        super.right = r;
-        super.left = l;
+        super.right = right;
+        super.left = left;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class GreaterThan extends Binary {
 
     @Override
     public double processOnTest(int instance) {
-        if (Data.train[instance][getVariavel()] > getLabel()) {
+        if (Data.test[instance][getVariavel()] > getLabel()) {
             return super.left.processOnTest(instance);
         } else {
             return super.right.processOnTest(instance);
@@ -45,11 +45,11 @@ public class GreaterThan extends Binary {
 
     @Override
     public int height() {
-        return 1;
+        return Math.max(super.getLeft().height(), super.getRight().height()) + 1;
     }
 
     public String toString(Data d) {
-        return "if( data[" + variable + "] > " + label + " ){" + "\n\t" + (super.getLeft().toString()) + "\n\t" + "\n}else{" + "\n\t" + (super.getRight().toString()) + "\n\t" + "}\n";
+        return "if( data[" + Data.columns[variable] + "] > " + label + " ){" + "\n\t" + (super.getLeft().toString()) + "\n\t" + "\n}else{" + "\n\t" + (super.getRight().toString()) + "\n\t" + "}\n";
     }
 
     public int getVariavel() {

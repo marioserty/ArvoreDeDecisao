@@ -44,32 +44,7 @@ public class Tan extends Unary {
 
     @Override
     public String toString() {
-        if (exp instanceof Variable) {
-            Variable var = (Variable) exp;
-            return "tan(data[\'" + Data.columns[var.getColumn()] + "\'])";
-        } else {
-            return "tan(" + exp.toString() + ")";
-        }
-    }
-
-    @Override
-    public ArithmeticExpression getRight() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ArithmeticExpression getLeft() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setRight(ArithmeticExpression exp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setLeft(ArithmeticExpression exp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "tan(" + exp.toString() + ")";
     }
 
 }

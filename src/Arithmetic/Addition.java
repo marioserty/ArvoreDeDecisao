@@ -5,17 +5,15 @@
  */
 package Arithmetic;
 
-import Data.Data;
-
 /**
  *
  * @author Mário
  */
 public final class Addition extends Binary {
 
-    public Addition(ArithmeticExpression l, ArithmeticExpression r) {
-        super.left = l;
-        super.right = r;
+    public Addition(ArithmeticExpression left, ArithmeticExpression right) {
+        super.left = left;
+        super.right = right;
     }
 
     @Override
